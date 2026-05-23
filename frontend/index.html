@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AstroVeda – Vedic Cosmic Guidance</title>
+  <link rel="stylesheet" href="css/main.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/global-fix.css"/>
+  <link rel="stylesheet" href="css/home-patch.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* Zodiac card — Indian only style */
+    .zodiac-sign-card { text-align:center; padding:1rem 0.6rem; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px; cursor:pointer; transition:all 0.3s; display:flex; flex-direction:column; gap:0.25rem; align-items:center; }
+    .zodiac-sign-card:hover { transform:translateY(-6px); border-color:var(--gold); box-shadow:0 0 25px rgba(201,168,76,0.3); }
+    .sign-animal { font-size:2rem; line-height:1.2; }
+    .sign-name   { font-family:var(--font-ui); font-size:0.85rem; color:var(--white); font-weight:700; letter-spacing:0.04em; }
+    .sign-hindi  { font-size:0.82rem; color:var(--gold); }
+  </style>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-zodiac">☽</div>
+      <div class="loader-text">AstroVeda</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+  </div>
+  <canvas id="cosmicCanvas"></canvas>
+  <nav class="navbar" id="navbar"></nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="planets-container">
+      <div class="planet planet-1"></div><div class="planet planet-2"></div>
+      <div class="planet planet-3"></div><div class="planet-ring"></div>
+    </div>
+    <div class="shooting-stars" id="shootingStars"></div>
+    <div class="hero-content">
+      <div class="hero-badge reveal">✦ Ancient Wisdom · Modern Guidance ✦</div>
+      <h1 class="hero-title reveal">AstroVeda</h1>
+      <p class="hero-subtitle reveal">Journey Through the Cosmos. Unlock Your Destiny.</p>
+      <p class="hero-desc reveal">Rooted in the sacred science of Vedic astrology, AstroVeda bridges celestial wisdom with your everyday life — guiding you through love, career, health, and spiritual awakening.</p>
+      <div class="hero-btns reveal">
+        <a href="pages/appointment.html" class="btn-primary"><span>Book Consultation</span><i class="fas fa-star"></i></a>
+        <a href="#founder" class="btn-secondary"><span>Meet Dr. Shastrijee</span><i class="fas fa-chevron-down"></i></a>
+      </div>
+    </div>
+    <div class="scroll-indicator"><div class="scroll-dot"></div><span>Scroll to Explore</span></div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card reveal"><div class="stat-icon">🌟</div><div class="stat-number" data-target="15000">0</div><div class="stat-plus">+</div><div class="stat-label">Happy Clients</div></div>
+      <div class="stat-card reveal"><div class="stat-icon">🪐</div><div class="stat-number" data-target="25">0</div><div class="stat-plus">+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat-card reveal"><div class="stat-icon">✨</div><div class="stat-number" data-target="50000">0</div><div class="stat-plus">+</div><div class="stat-label">Consultations</div></div>
+      <div class="stat-card reveal"><div class="stat-icon">🏆</div><div class="stat-number" data-target="120">0</div><div class="stat-plus">+</div><div class="stat-label">Awards Won</div></div>
+    </div>
+  </section>
+
+  <!-- FOUNDER -->
+  <section class="founder-section" id="founder">
+    <div class="founder-bg-glow"></div>
+    <div class="section-header reveal">
+      <div class="section-badge">Meet the Founder</div>
+      <h2 class="section-title">Guided by <em>Wisdom & Stars</em></h2>
+    </div>
+    <div class="founder-card reveal">
+      <div class="founder-image-wrap">
+        <div class="founder-image-placeholder"><i class="fas fa-user-circle"></i><span>Photo Coming Soon</span></div>
+        <div class="founder-glow-ring"></div>
+      </div>
+      <div class="founder-info">
+        <h2 class="founder-name">Dr. Rajesh R Shastrijee</h2>
+        <p class="founder-title">Renowned Vedic Astrologer & Spiritual Guide</p>
+        <div class="founder-contact-bar">
+          <a href="tel:+918863038229" class="founder-contact-item" style="font-size:1rem;font-weight:800;letter-spacing:0.05em;">
+            <i class="fas fa-phone"></i><span>+91 8863038229</span>
+          </a>
+          <a href="mailto:astrorrshastri@gmail.com" class="founder-contact-item">
+            <i class="fas fa-envelope"></i><span>astrorrshastri@gmail.com</span>
+          </a>
+          <a href="https://wa.me/918863038229" target="_blank" class="founder-contact-item whatsapp">
+            <i class="fab fa-whatsapp"></i><span>WhatsApp Now</span>
+          </a>
+        </div>
+        <p class="founder-desc">With over 25 years of dedicated practice in Vedic astrology, Dr. Rajesh R Shastrijee has transformed thousands of lives through Jyotish. His recognition spans India and internationally — including the IAF Brand Ambassador title, USA Astrological Fellowship Award, and Maharsi Gyan Ratna Award.</p>
+        <div class="founder-highlights">
+          <div class="highlight-item"><i class="fas fa-graduation-cap"></i><div><h4>Education</h4><p>PhD in Vedic Astrology · Jyotish Acharya · Sanskrit Scholar</p></div></div>
+          <div class="highlight-item"><i class="fas fa-trophy"></i><div><h4>Awards</h4><p>IAF Brand Ambassador · USA Astrological Fellowship Award · Maharsi Gyan Ratna Award</p></div></div>
+          <div class="highlight-item"><i class="fas fa-star"></i><div><h4>Expertise</h4><p>Parashari · Jaimini · KP · Nadi Astrology · Muhurta · Vastu</p></div></div>
+          <div class="highlight-item"><i class="fas fa-globe"></i><div><h4>Global Reach</h4><p>Online consultations only · Clients in 40+ countries · Video call, WhatsApp &amp; phone</p></div></div>
+        </div>
+        <a href="pages/appointment.html" class="btn-primary">Book with Dr. Shastrijee <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services-section" id="services">
+    <div class="section-header reveal">
+      <div class="section-badge">Our Services</div>
+      <h2 class="section-title">Celestial Guidance <em>for Every Path</em></h2>
+      <p class="section-sub">Comprehensive Vedic astrology services tailored to illuminate every dimension of your life journey.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal"><div class="service-icon">🎁</div><h3>Free Consultation</h3><p>A complimentary introductory session — completely free. Get your first cosmic guidance from Dr. Shastrijee.</p><a href="pages/appointment.html" class="service-link">Book Free →</a></div>
+      <div class="service-card reveal"><div class="service-icon">🔮</div><h3>Detailed Jyotish Vishleshan</h3><p>In-depth Vedic analysis: all 12 houses, Dasha periods, transits, 5-year predictions with personalized remedies.</p><a href="pages/appointment.html" class="service-link">Book Now →</a></div>
+      <div class="service-card reveal"><div class="service-icon">📜</div><h3>Kundli Nirman</h3><p>Beautifully crafted Janam Kundli with Rashi, Navamsa charts and a complete written interpretation report.</p><a href="pages/appointment.html" class="service-link">Book Now →</a></div>
+      <div class="service-card reveal"><div class="service-icon">💑</div><h3>Marriage Compatibility</h3><p>Kundali matching with Ashtakoota analysis for a harmonious and blessed union.</p><a href="pages/appointment.html" class="service-link">Book Now →</a></div>
+      <div class="service-card reveal"><div class="service-icon">💼</div><h3>Career & Finance</h3><p>Planetary guidance for career path, business decisions, and financial prosperity.</p><a href="pages/appointment.html" class="service-link">Book Now →</a></div>
+      <div class="service-card reveal"><div class="service-icon">🧿</div><h3>Vastu & Remedies</h3><p>Gemstone recommendations, mantra remedies, and Vastu corrections for home and office.</p><a href="pages/appointment.html" class="service-link">Book Now →</a></div>
+    </div>
+  </section>
+
+  <!-- ZODIAC SECTION — Indian only -->
+  <section class="zodiac-section" id="zodiac">
+    <div class="section-header reveal">
+      <div class="section-badge">राशि चक्र · Rashi Chakra</div>
+      <h2 class="section-title">Your <em>Vedic Rashi</em></h2>
+      <p class="section-sub">Click on your Rashi to receive Dr. Shastrijee's personal monthly guidance.</p>
+    </div>
+    <div class="zodiac-wheel-container reveal">
+      <canvas id="zodiacWheel" width="480" height="480"></canvas>
+    </div>
+    <!-- Built dynamically by home.js — Indian names, animals, Hindi only -->
+    <div class="zodiac-signs-grid" id="zodiacSignsGrid"></div>
+  </section>
+
+  <!-- Rashi Detail Modal -->
+  <div class="modal-overlay" id="rashiModal">
+    <div class="modal rashi-modal">
+      <button class="modal-close" id="rashiModalClose"><i class="fas fa-times"></i></button>
+      <div id="rashiModalContent"></div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="section-header reveal">
+      <div class="section-badge">Testimonials</div>
+      <h2 class="section-title">Voices of the <em>Stars</em></h2>
+      <p class="section-sub">Real experiences from our clients across the world.</p>
+    </div>
+    <div class="testimonials-carousel" id="testimonialsCarousel"></div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+      <div class="carousel-dots" id="carouselDots"></div>
+      <button class="carousel-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SHARE YOUR EXPERIENCE -->
+    <div class="write-review-section">
+      <div class="review-outer-wrap">
+        <div class="review-left reveal">
+          <h3>Share Your Experience</h3>
+          <p>Had a consultation with Dr. Shastrijee? Your story helps thousands of others on their cosmic journey. Approved reviews appear in the Voices of Stars section above.</p>
+          <div class="review-perks">
+            <div class="review-perk"><i class="fas fa-check-circle"></i> Personally reviewed by Dr. Shastrijee before publishing</div>
+            <div class="review-perk"><i class="fas fa-check-circle"></i> Displayed with your name and location</div>
+            <div class="review-perk"><i class="fas fa-check-circle"></i> Helps others make the right decision</div>
+            <div class="review-perk"><i class="fas fa-lock"></i> Account required — takes 30 seconds to create</div>
+          </div>
+        </div>
+        <div class="review-form-card reveal">
+          <h4>✍️ Write a Review</h4>
+          <p>Rate your experience and share what Dr. Shastrijee helped you with.</p>
+          <div class="review-login-notice" id="reviewLoginNotice" style="display:none;">
+            <i class="fas fa-lock"></i>
+            <span>Please <a href="pages/auth.html">login or sign up</a> to write a review.</span>
+          </div>
+          <div id="reviewFormFields">
+            <div class="star-rating-row">
+              <span class="star-rating-label">Rating:</span>
+              <div class="stars-wrap" id="starRating">
+                <span class="star-inp" data-val="1">★</span>
+                <span class="star-inp" data-val="2">★</span>
+                <span class="star-inp" data-val="3">★</span>
+                <span class="star-inp" data-val="4">★</span>
+                <span class="star-inp" data-val="5">★</span>
+              </div>
+              <span id="starLabel" style="font-family:var(--font-ui);font-size:0.8rem;color:var(--gold);"></span>
+            </div>
+            <div class="review-row-2">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Your Name</label>
+                <input type="text" class="form-input" id="reviewName" readonly style="opacity:0.7;"/>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">City / Country</label>
+                <input type="text" class="form-input" id="reviewLocation" placeholder="e.g. Mumbai, India"/>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:0.8rem;">
+              <label class="form-label">Your Experience</label>
+              <textarea class="form-textarea" id="reviewText" placeholder="What did Dr. Shastrijee help you with? How accurate were the predictions? Min 20 characters." style="min-height:100px;"></textarea>
+            </div>
+            <button class="btn-primary" id="submitReviewBtn" style="width:100%;justify-content:center;margin-top:0.5rem;">
+              <i class="fas fa-paper-plane"></i><span>Submit</span>
+            </button>
+            <p style="font-family:var(--font-ui);font-size:0.72rem;color:var(--silver);text-align:center;margin-top:0.5rem;">Reviews are approved by Dr. Shastrijee before appearing publicly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">✦ AstroVeda</div>
+        <p>Ancient wisdom for the modern soul. Let the stars guide your path.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="https://wa.me/918863038229" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pages/appointment.html">Book Appointment</a></li>
+          <li><a href="pages/products.html">Products</a></li>
+          <li><a href="pages/achievements.html">Achievements</a></li>
+          <li><a href="pages/about.html">About</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="pages/appointment.html">Free Consultation</a></li>
+          <li><a href="pages/appointment.html">Jyotish Vishleshan</a></li>
+          <li><a href="pages/appointment.html">Kundli Nirman</a></li>
+          <li><a href="pages/appointment.html">Marriage Compat.</a></li>
+          <li><a href="pages/appointment.html">Vastu & Remedies</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-phone"></i> +91 8863038229</p>
+        <p><i class="fab fa-whatsapp"></i> +91 8863038229</p>
+        <p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p>
+        <div class="footer-zodiac-row" style="margin-top:0.8rem;font-size:1.1rem;color:var(--gold);opacity:0.4;letter-spacing:0.2em;">मेष वृषभ मिथुन कर्क सिंह कन्या</div>
+        <div class="footer-zodiac-row" style="font-size:1.1rem;color:var(--gold);opacity:0.4;letter-spacing:0.15em;">तुला वृश्चिक धनु मकर कुंभ मीन</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p>
+      <p><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/cosmic.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

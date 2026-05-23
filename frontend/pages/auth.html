@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login / Signup – AstroVeda</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{min-height:100%;background:#02020a;color:#f5f0ff;font-family:'Cormorant Garamond',serif;cursor:none;overflow-x:hidden;overflow-y:auto}
+
+#cur{position:fixed;width:22px;height:22px;border-radius:50%;pointer-events:none;z-index:99999;background:radial-gradient(circle,rgba(255,224,102,.9),transparent 70%);transform:translate(-50%,-50%);mix-blend-mode:screen}
+#trail{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:99998;background:#c9a84c;transform:translate(-50%,-50%);opacity:.55}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.ag{position:fixed;border-radius:50%;pointer-events:none;z-index:1}
+.ag1{width:700px;height:700px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(74,29,150,.5),transparent 65%)}
+.ag2{width:600px;height:600px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(201,168,76,.2),transparent 65%)}
+
+/* NAV */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2.5rem;background:rgba(2,2,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,.18)}
+.nav-logo{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:#c9a84c;text-shadow:0 0 18px #c9a84c;text-decoration:none;display:flex;align-items:center;gap:.4rem}
+.nav-right{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+.nav-right a{font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(168,164,200,.7);text-decoration:none;transition:color .3s;white-space:nowrap}
+.nav-right a:hover{color:#c9a84c}
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
+.nav-hamburger span{display:block;width:24px;height:2px;background:#c9a84c;border-radius:2px}
+
+/* PAGE */
+.auth-page{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1.5rem 3rem}
+
+/* CARD — KEY FIX: NO overflow:hidden, NO max-height */
+.auth-card{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  max-width:980px;width:100%;
+  border-radius:28px;
+  /* overflow:hidden REMOVED — this was the bug */
+  box-shadow:0 0 80px rgba(74,29,150,.5),0 0 0 1px rgba(201,168,76,.12);
+  background:rgba(5,5,20,.6);
+  backdrop-filter:blur(20px);
+}
+
+/* LEFT PANEL */
+.left-panel{
+  position:relative;
+  background:linear-gradient(160deg,rgba(18,18,65,.98),rgba(38,18,95,.95),rgba(65,22,140,.88));
+  padding:3rem 2.2rem;
+  display:flex;flex-direction:column;align-items:center;gap:1.8rem;
+  overflow:hidden; /* only left panel clips, not the card */
+  border-right:1px solid rgba(201,168,76,.18);
+  border-radius:28px 0 0 28px;
+}
+.left-panel::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(201,168,76,.04) 60deg,transparent 120deg,rgba(74,29,150,.08) 180deg,transparent 240deg,rgba(201,168,76,.04) 300deg,transparent);animation:spin 25s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.brand-wrap{text-align:center;position:relative;z-index:2}
+.brand-om{font-size:4.5rem;color:#c9a84c;display:block;line-height:1;margin-bottom:.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,.9));animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 12px rgba(201,168,76,.6))}50%{filter:drop-shadow(0 0 35px rgba(201,168,76,1))}}
+.brand-name{font-family:'Cinzel Decorative',serif;font-size:2rem;color:#c9a84c;letter-spacing:.1em;text-shadow:0 0 25px rgba(201,168,76,.5)}
+.brand-sub{color:rgba(168,164,200,.8);font-size:.95rem;line-height:1.65;margin-top:.5rem}
+.wheel-wrap{position:relative;z-index:2}
+#zwCanvas{display:block}
+.feat-list{display:flex;flex-direction:column;gap:.6rem;position:relative;z-index:2;width:100%}
+.feat-item{display:flex;align-items:center;gap:.8rem;padding:.65rem .9rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.14);border-radius:10px;transition:all .3s}
+.feat-item:hover{background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.3)}
+.feat-item i{color:#c9a84c;font-size:.9rem;width:16px;flex-shrink:0}
+.feat-item span{font-family:'Rajdhani',sans-serif;font-size:.81rem;color:rgba(168,164,200,.88)}
+.left-quote{font-style:italic;color:rgba(168,164,200,.5);font-size:.86rem;text-align:center;position:relative;z-index:2;padding-top:1rem;border-top:1px solid rgba(201,168,76,.1);width:100%}
+
+/* RIGHT PANEL — KEY FIX: NO max-height, NO overflow-y:auto */
+.right-panel{
+  padding:2.8rem 3rem;
+  display:flex;flex-direction:column;gap:0;
+  /* NO max-height — let it grow naturally */
+  border-radius:0 28px 28px 0;
+}
+
+/* TAB TOGGLE */
+.tab-wrap{position:relative;display:flex;background:rgba(255,255,255,.06);border:1.5px solid rgba(201,168,76,.25);border-radius:40px;padding:5px;margin-bottom:1.8rem;flex-shrink:0}
+.tab-pill{position:absolute;top:5px;left:5px;height:calc(100% - 10px);width:calc(50% - 5px);background:linear-gradient(135deg,#c9a84c,#f0d060);border-radius:35px;transition:transform .4s cubic-bezier(.16,1,.3,1);box-shadow:0 0 18px rgba(201,168,76,.55);pointer-events:none;z-index:0}
+.tab-pill.su{transform:translateX(100%)}
+.tab-btn{flex:1;padding:.7rem 1rem;font-family:'Rajdhani',sans-serif;font-size:.93rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;border:none;cursor:pointer;border-radius:35px;position:relative;z-index:2;color:rgba(168,164,200,.65);transition:color .3s}
+.tab-btn.on{color:#02020a}
+.tab-btn:not(.on):hover{color:#f5f0ff}
+
+/* FORM */
+.fsec{display:flex;flex-direction:column;gap:1.1rem}
+.fsec.off{display:none}
+.ftitle{font-family:'Cinzel Decorative',serif;font-size:1.55rem;color:#f5f0ff;line-height:1.2;margin-bottom:.1rem}
+.fsub{color:rgba(168,164,200,.72);font-size:.9rem;line-height:1.5;margin-bottom:.4rem}
+
+.fg{display:flex;flex-direction:column;gap:.38rem}
+.fl{font-family:'Rajdhani',sans-serif;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:#c9a84c;font-weight:600}
+.iw{position:relative;display:flex;align-items:center}
+.iw .il{position:absolute;left:1rem;color:rgba(168,164,200,.45);font-size:.85rem;pointer-events:none;z-index:1}
+.fi{width:100%;padding:.88rem 2.8rem .88rem 2.8rem;background:rgba(255,255,255,.052);border:1.5px solid rgba(201,168,76,.17);border-radius:11px;color:#f5f0ff;font-family:'Cormorant Garamond',serif;font-size:1.02rem;outline:none;transition:all .3s}
+.fi:focus{border-color:#c9a84c;background:rgba(255,255,255,.085);box-shadow:0 0 0 3px rgba(201,168,76,.13)}
+.fi::placeholder{color:rgba(168,164,200,.36);font-size:.93rem}
+.fi.bad{border-color:#ff6b6b;box-shadow:0 0 0 3px rgba(255,107,107,.1)}
+.eye{position:absolute;right:.85rem;background:none;border:none;color:rgba(168,164,200,.5);cursor:pointer;padding:.3rem;z-index:3;font-size:.88rem;transition:color .3s}
+.eye:hover{color:#c9a84c}
+.fe{font-family:'Rajdhani',sans-serif;font-size:.74rem;color:#ff6b6b;display:none;padding-left:.15rem}
+.fe.on{display:block}
+
+.arow{display:flex;justify-content:space-between;align-items:center;font-family:'Rajdhani',sans-serif;font-size:.83rem}
+.rlabel{display:flex;align-items:center;gap:.5rem;color:rgba(168,164,200,.72);cursor:pointer}
+.rlabel input{accent-color:#c9a84c;width:14px;height:14px}
+.flnk{color:#c9a84c;text-decoration:none;transition:opacity .3s}
+.flnk:hover{opacity:.7}
+
+.sbtn{width:100%;padding:.95rem 1.5rem;border-radius:50px;background:linear-gradient(135deg,#c9a84c,#f0d060);color:#02020a;font-family:'Rajdhani',sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7rem;box-shadow:0 5px 28px rgba(201,168,76,.42);transition:all .3s;position:relative;overflow:hidden;margin-top:.5rem}
+.sbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#f0d060,#ffe066);opacity:0;transition:opacity .3s}
+.sbtn:hover{transform:translateY(-3px);box-shadow:0 8px 45px rgba(201,168,76,.65)}
+.sbtn:hover::before{opacity:1}
+.sbtn span,.sbtn i{position:relative;z-index:1}
+
+.dvd{display:flex;align-items:center;gap:1rem;font-family:'Rajdhani',sans-serif;font-size:.76rem;color:rgba(168,164,200,.38);margin:.3rem 0}
+.dvd::before,.dvd::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.1)}
+
+.srow{display:flex;gap:.7rem}
+.sbtn2{flex:1;padding:.65rem .8rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.1);border-radius:10px;color:rgba(168,164,200,.38);font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:.5rem;cursor:not-allowed;opacity:.4}
+
+.uprev{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:.75rem .95rem;font-family:'Rajdhani',sans-serif;font-size:.82rem;color:rgba(168,164,200,.88);display:none;align-items:center;gap:.6rem}
+.uprev i{color:#c9a84c}
+.uprev strong{color:#c9a84c}
+
+/* SUCCESS */
+.okscreen{display:none;flex-direction:column;align-items:center;text-align:center;padding:2.5rem 1rem;gap:1.2rem}
+.okscreen.on{display:flex}
+.okemoji{font-size:4rem;animation:pop .6s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.okstars{font-size:1.2rem;letter-spacing:.5rem;color:#c9a84c}
+.oktitle{font-family:'Cinzel Decorative',serif;font-size:1.8rem;color:#c9a84c;text-shadow:0 0 20px rgba(201,168,76,.5)}
+.okmsg{color:rgba(168,164,200,.82);font-size:1rem;line-height:1.7;max-width:300px}
+.okuname{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:.8rem 1.4rem;font-family:'Rajdhani',sans-serif;font-size:.9rem;color:rgba(168,164,200,.88);display:none;align-items:center;justify-content:center;gap:.6rem}
+.okuname.on{display:flex}
+.okuname strong{color:#c9a84c}
+.enterbtn{display:inline-flex;align-items:center;gap:.7rem;padding:.9rem 2.2rem;border-radius:50px;background:linear-gradient(135deg,#c9a84c,#f0d060);color:#02020a;font-family:'Rajdhani',sans-serif;font-size:.93rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;box-shadow:0 5px 22px rgba(201,168,76,.38);transition:all .3s;margin-top:.3rem}
+.enterbtn:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(201,168,76,.65)}
+
+@media(max-width:860px){
+  .auth-card{grid-template-columns:1fr;max-width:480px}
+  .left-panel{display:none}
+  .right-panel{border-radius:28px;padding:2.2rem 1.8rem}
+  .auth-page{padding:5.5rem 1rem 2.5rem;align-items:flex-start}
+}
+@media(max-width:600px){
+  .nav-right{display:none}
+  .nav-hamburger{display:flex}
+  .nav-right.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(2,2,10,.97);padding:1.5rem;border-bottom:1px solid rgba(201,168,76,.15)}
+  .navbar{position:fixed}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="trail"></div>
+<canvas id="bgCanvas"></canvas>
+<div class="ag ag1"></div>
+<div class="ag ag2"></div>
+
+<nav class="navbar">
+  <a class="nav-logo" href="../index.html">✦ AstroVeda</a>
+  <button class="nav-hamburger" id="navHam"><span></span><span></span><span></span></button>
+  <div class="nav-right" id="navRight">
+    <a href="../index.html">Home</a>
+    <a href="appointment.html">Book Appointment</a>
+    <a href="products.html">Products</a>
+    <a href="announcements.html">Announcements</a>
+    <a href="achievements.html">Achievements</a>
+    <a href="profile.html">Profile</a>
+    <a href="about.html">About</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+</nav>
+
+<div class="auth-page">
+<div class="auth-card">
+
+  <!-- LEFT -->
+  <div class="left-panel" id="LP">
+    <div class="brand-wrap">
+      <span class="brand-om">ॐ</span>
+      <div class="brand-name">AstroVeda</div>
+      <div class="brand-sub">Ancient wisdom meets modern guidance. Begin your cosmic journey today.</div>
+    </div>
+    <div class="wheel-wrap"><canvas id="zwCanvas" width="220" height="220"></canvas></div>
+    <div class="feat-list">
+      <div class="feat-item"><i class="fas fa-star"></i><span>15,000+ Happy Clients Worldwide</span></div>
+      <div class="feat-item"><i class="fas fa-shield-alt"></i><span>100% Secure &amp; Confidential</span></div>
+      <div class="feat-item"><i class="fas fa-globe"></i><span>Consultations in 40+ Countries</span></div>
+      <div class="feat-item"><i class="fas fa-certificate"></i><span>IAF Brand Ambassador</span></div>
+    </div>
+    <div class="left-quote">"The stars incline us, they do not bind us."</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+
+    <div class="tab-wrap" id="TW">
+      <button class="tab-btn on" id="BL" type="button">Login</button>
+      <button class="tab-btn" id="BS" type="button">Sign Up</button>
+      <div class="tab-pill" id="TP"></div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="fsec" id="LF">
+      <div>
+        <div class="ftitle">Welcome Back</div>
+        <div class="fsub">Sign in to continue your cosmic journey.</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Mobile Number or Username</label>
+        <div class="iw"><i class="fas fa-user il"></i>
+          <input class="fi" id="LI" type="text" placeholder="Mobile number or username" autocomplete="username"/>
+        </div>
+        <div class="fe" id="LIE"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Password</label>
+        <div class="iw"><i class="fas fa-lock il"></i>
+          <input class="fi" id="LP2" type="password" placeholder="Your password" autocomplete="current-password"/>
+          <button class="eye" id="EL" type="button"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="fe" id="LPE"></div>
+      </div>
+      <div class="arow">
+        <label class="rlabel"><input type="checkbox"/> Remember me</label>
+        <a href="#" class="flnk">Forgot Password?</a>
+      </div>
+      <button class="sbtn" id="LB" type="button">
+        <span>Login to AstroVeda</span><i class="fas fa-arrow-right"></i>
+      </button>
+      <div class="dvd"><span>or continue with</span></div>
+      <div class="srow">
+        <div class="sbtn2"><i class="fab fa-google"></i> Google (Soon)</div>
+        <div class="sbtn2"><i class="fab fa-facebook-f"></i> Facebook (Soon)</div>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="fsec off" id="SF">
+      <div>
+        <div class="ftitle">Begin Your Journey</div>
+        <div class="fsub">Create your account — just name &amp; mobile number.</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Full Name</label>
+        <div class="iw"><i class="fas fa-user-circle il"></i>
+          <input class="fi" id="SN" type="text" placeholder="Your full name" autocomplete="name"/>
+        </div>
+        <div class="fe" id="SNE"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Mobile Number</label>
+        <div class="iw"><i class="fas fa-phone il"></i>
+          <input class="fi" id="SM" type="tel" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel"/>
+        </div>
+        <div class="fe" id="SME"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Password</label>
+        <div class="iw"><i class="fas fa-lock il"></i>
+          <input class="fi" id="SP" type="password" placeholder="Minimum 6 characters" autocomplete="new-password"/>
+          <button class="eye" id="ES" type="button"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="fe" id="SPE"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Confirm Password</label>
+        <div class="iw"><i class="fas fa-lock il"></i>
+          <input class="fi" id="SC" type="password" placeholder="Re-enter your password" autocomplete="new-password"/>
+          <button class="eye" id="EC" type="button"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="fe" id="SCE"></div>
+      </div>
+      <div class="uprev" id="UP"><i class="fas fa-magic"></i> Your username: <strong id="UV">—</strong></div>
+      <button class="sbtn" id="SB" type="button">
+        <span>Create My Account</span><i class="fas fa-star"></i>
+      </button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="okscreen" id="OK">
+      <div class="okemoji">✨</div>
+      <div class="okstars">★ ★ ★ ★ ★</div>
+      <div class="oktitle" id="OT">Welcome!</div>
+      <div class="okmsg" id="OM">You are now logged in.</div>
+      <div class="okuname" id="OU"><i class="fas fa-id-badge"></i> Your username: <strong id="OUN"></strong></div>
+      <a href="../index.html" class="enterbtn"><span>Enter AstroVeda</span><i class="fas fa-arrow-right"></i></a>
+    </div>
+
+  </div><!-- end right -->
+</div><!-- end card -->
+</div><!-- end page -->
+
+<script src="../js/config.js"></script>
+<script>
+(function(){
+'use strict';
+
+// Auto-detect API URL
+var API = window.ASTROVEDA_API || (window.location.port === '5000'
+  ? '/api'
+  : 'http://localhost:5000/api');
+
+/* ── NAV HAMBURGER ── */
+document.getElementById('navHam').onclick=function(){
+  document.getElementById('navRight').classList.toggle('open');
+};
+
+/* ── ELEMENTS ── */
+var BL=document.getElementById('BL'), BS=document.getElementById('BS');
+var TP=document.getElementById('TP'), TW=document.getElementById('TW');
+var LF=document.getElementById('LF'), SF=document.getElementById('SF');
+var LB=document.getElementById('LB'), SB=document.getElementById('SB');
+var OK=document.getElementById('OK');
+
+/* ── TAB SWITCH ── */
+BL.onclick=function(){ BL.classList.add('on'); BS.classList.remove('on'); TP.classList.remove('su'); SF.classList.add('off'); LF.classList.remove('off'); clrErr(); };
+BS.onclick=function(){ BS.classList.add('on'); BL.classList.remove('on'); TP.classList.add('su');    LF.classList.add('off'); SF.classList.remove('off'); clrErr(); };
+
+/* ── EYE TOGGLE ── */
+function eye(b,i){
+  document.getElementById(b).onclick=function(e){
+    e.preventDefault();
+    var el=document.getElementById(i), show=el.type==='password';
+    el.type=show?'text':'password';
+    this.querySelector('i').className=show?'fas fa-eye-slash':'fas fa-eye';
+  };
+}
+eye('EL','LP2'); eye('ES','SP'); eye('EC','SC');
+
+/* ── USERNAME PREVIEW ── */
+document.getElementById('SN').oninput=function(){
+  var v=this.value.trim(), box=document.getElementById('UP'), lbl=document.getElementById('UV');
+  if(v.length>=2){lbl.textContent=mkU(v);box.style.display='flex';}
+  else box.style.display='none';
+};
+function mkU(n){var b=n.split(' ')[0].toLowerCase().replace(/[^a-z]/g,'')||'user';return b+(1000+Math.floor(Math.random()*9000));}
+
+/* ── ERRORS ── */
+function setE(ii,ei,m){
+  var i=document.getElementById(ii),e=document.getElementById(ei);
+  if(i)i.classList.add('bad');
+  if(e){e.textContent=m;e.classList.add('on');}
+}
+function clrErr(){
+  ['LI','LP2','SN','SM','SP','SC'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('bad');});
+  ['LIE','LPE','SNE','SME','SPE','SCE'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('on');});
+}
+function gv(id){return document.getElementById(id)?document.getElementById(id).value:'';}
+
+/* ── BUTTON LOADING STATE ── */
+function setBtnLoading(btn, loading){
+  if(loading){
+    btn.disabled=true;
+    btn.setAttribute('data-orig', btn.innerHTML);
+    btn.innerHTML='<i class="fas fa-spinner fa-spin"></i><span> Please wait...</span>';
+  } else {
+    btn.disabled=false;
+    btn.innerHTML=btn.getAttribute('data-orig')||btn.innerHTML;
+  }
+}
+
+/* ── STORE USER IN LOCALSTORAGE ── */
+function sCU(user, token){
+  localStorage.setItem('astroveda_current_user', JSON.stringify(user));
+  if(token) localStorage.setItem('astroveda_token', token);
+}
+
+/* ── SUCCESS SCREEN ── */
+function showOK(t,m,un){
+  LF.classList.add('off'); SF.classList.add('off');
+  TW.style.display='none'; OK.classList.add('on');
+  document.getElementById('OT').textContent=t;
+  document.getElementById('OM').textContent=m;
+  if(un){ document.getElementById('OU').classList.add('on'); document.getElementById('OUN').textContent=un; }
+}
+
+/* ── LOGIN ── calls POST /api/auth/login ── */
+LB.onclick=function(){
+  clrErr();
+  var id=gv('LI').trim(), pw=gv('LP2'), ok=true;
+  if(!id){setE('LI','LIE','Enter your mobile number or username.');ok=false;}
+  if(!pw){setE('LP2','LPE','Enter your password.');ok=false;}
+  if(!ok)return;
+
+  setBtnLoading(LB, true);
+  fetch(API+'/auth/login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({identifier:id, password:pw})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    setBtnLoading(LB, false);
+    if(data.success){
+      sCU(data.user, data.token);
+      showOK('Welcome Back! 🌟', 'Great to see you, '+data.user.name.split(' ')[0]+'!', null);
+    } else {
+      // Distinguish error type
+      var msg = data.message||'Login failed. Please try again.';
+      if(msg.toLowerCase().includes('password')||msg.toLowerCase().includes('credentials')){
+        setE('LP2','LPE',msg);
+      } else {
+        setE('LI','LIE',msg);
+      }
+    }
+  })
+  .catch(function(err){
+    setBtnLoading(LB, false);
+    setE('LI','LIE','⚠️ Cannot connect to server. Make sure backend is running on port 5000.');
+    console.error('Login error:', err);
+  });
+};
+
+/* ── SIGNUP ── calls POST /api/auth/signup → saves to MongoDB ── */
+SB.onclick=function(){
+  clrErr();
+  var name=gv('SN').trim(), mob=gv('SM').trim(), pw=gv('SP'), conf=gv('SC'), ok=true;
+  if(name.length<2){setE('SN','SNE','Enter your full name (min 2 chars).');ok=false;}
+  if(!/^\d{10}$/.test(mob)){setE('SM','SME','Enter a valid 10-digit mobile number.');ok=false;}
+  if(pw.length<6){setE('SP','SPE','Password must be at least 6 characters.');ok=false;}
+  if(pw!==conf){setE('SC','SCE','Passwords do not match.');ok=false;}
+  if(!ok)return;
+
+  setBtnLoading(SB, true);
+  fetch(API+'/auth/signup', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name, mobile:mob, password:pw})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    setBtnLoading(SB, false);
+    if(data.success){
+      sCU(data.user, data.token);
+      showOK('Account Created! ✨', 'Welcome to AstroVeda, '+data.user.name.split(' ')[0]+'!', data.user.username);
+    } else {
+      var msg = data.message||'Signup failed.';
+      if(msg.toLowerCase().includes('mobile')||msg.toLowerCase().includes('registered')){
+        setE('SM','SME',msg);
+      } else {
+        setE('SN','SNE',msg);
+      }
+    }
+  })
+  .catch(function(err){
+    setBtnLoading(SB, false);
+    setE('SN','SNE','⚠️ Cannot connect to server. Make sure backend is running on port 5000.');
+    console.error('Signup error:', err);
+  });
+};
+
+/* ── ENTER KEY ── */
+document.onkeydown=function(e){
+  if(e.key!=='Enter')return;
+  if(!LF.classList.contains('off'))LB.click();
+  else if(!SF.classList.contains('off'))SB.click();
+};
+
+/* ── CURSOR ── */
+var cur=document.getElementById('cur'),trail=document.getElementById('trail'),mx=0,my=0,tx=0,ty=0;
+document.onmousemove=function(e){mx=e.clientX;my=e.clientY;if(cur){cur.style.left=mx+'px';cur.style.top=my+'px';}};
+(function tick(){tx+=(mx-tx)*.15;ty+=(my-ty)*.15;if(trail){trail.style.left=tx+'px';trail.style.top=ty+'px';}requestAnimationFrame(tick);})();
+document.querySelectorAll('button,a,input').forEach(function(el){
+  el.addEventListener('mouseenter',function(){if(cur){cur.style.width='40px';cur.style.height='40px';}});
+  el.addEventListener('mouseleave',function(){if(cur){cur.style.width='22px';cur.style.height='22px';}});
+});
+
+/* ── STARS BG ── */
+var bgc=document.getElementById('bgCanvas'),bgx=bgc.getContext('2d'),bW,bH,stars=[],nebs=[];
+function rsz(){bW=bgc.width=window.innerWidth;bH=bgc.height=window.innerHeight;mkSt();}
+function mkSt(){
+  stars=[];
+  for(var i=0;i<280;i++){var c=Math.random()>.9?[201,168,76]:Math.random()>.85?[199,125,255]:[255,255,255];stars.push({x:Math.random()*bW,y:Math.random()*bH,r:Math.random()*1.4+.2,op:Math.random()*.65+.2,sp:Math.random()*.0006+.0002,ph:Math.random()*Math.PI*2,c:c});}
+  nebs=[{x:bW*.1,y:bH*.15,r:380,c:'rgba(74,29,150,',ph:0},{x:bW*.88,y:bH*.78,r:320,c:'rgba(201,168,76,',ph:2},{x:bW*.5,y:bH*.5,r:260,c:'rgba(40,18,90,',ph:4}];
+}
+window.addEventListener('resize',rsz);rsz();
+function abg(ts){
+  bgx.clearRect(0,0,bW,bH);
+  nebs.forEach(function(n){var op=.04+.015*Math.sin(ts*.0004+n.ph);var g=bgx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);g.addColorStop(0,n.c+op+')');g.addColorStop(1,'transparent');bgx.fillStyle=g;bgx.beginPath();bgx.arc(n.x,n.y,n.r,0,Math.PI*2);bgx.fill();});
+  stars.forEach(function(s){var op=s.op*(0.4+0.6*Math.sin(ts*s.sp+s.ph));bgx.beginPath();bgx.arc(s.x,s.y,s.r,0,Math.PI*2);bgx.fillStyle='rgba('+s.c[0]+','+s.c[1]+','+s.c[2]+','+op+')';bgx.fill();});
+  requestAnimationFrame(abg);
+}requestAnimationFrame(abg);
+
+/* ── ZODIAC WHEEL ── */
+var zc=document.getElementById('zwCanvas'),zx=zc.getContext('2d'),zr=0;
+var zN=['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'];
+var zA=['🐏','🐂','👫','🦀','🦁','👧','⚖️','🦂','🏹','🐊','🏺','🐟'];
+var zC=['#ff6b6b','#ff9f43','#feca57','#48dbfb','#ff9ff3','#54a0ff','#c8d6e5','#ee5a24','#8395a7','#576574','#00d2d3','#5f27cd'];
+function dz(){
+  var W=zc.width,H=zc.height,cx=W/2,cy=H/2,oR=cx-4,aR=cx-24,hR=cx-47,cR=45;
+  zx.clearRect(0,0,W,H);
+  for(var i=0;i<12;i++){
+    var s=(i*30-90+zr)*Math.PI/180,e=((i+1)*30-90+zr)*Math.PI/180,m=(s+e)/2;
+    zx.beginPath();zx.moveTo(cx,cy);zx.arc(cx,cy,oR,s,e);zx.closePath();zx.fillStyle=zC[i]+'28';zx.fill();
+    zx.strokeStyle='rgba(201,168,76,.22)';zx.lineWidth=1;zx.stroke();
+    zx.font='10px serif';zx.textAlign='center';zx.textBaseline='middle';zx.fillStyle='rgba(255,255,255,.6)';
+    zx.fillText(zA[i],cx+aR*Math.cos(m),cy+aR*Math.sin(m));
+    zx.font='bold 8px sans-serif';zx.fillStyle='rgba(201,168,76,.88)';
+    zx.fillText(zN[i],cx+hR*Math.cos(m),cy+hR*Math.sin(m));
+  }
+  zx.beginPath();zx.arc(cx,cy,oR,0,Math.PI*2);zx.strokeStyle='rgba(201,168,76,.48)';zx.lineWidth=1.5;zx.stroke();
+  for(var j=0;j<12;j++){var a=(j*30-90+zr)*Math.PI/180;zx.beginPath();zx.moveTo(cx+cR*Math.cos(a),cy+cR*Math.sin(a));zx.lineTo(cx+oR*Math.cos(a),cy+oR*Math.sin(a));zx.strokeStyle='rgba(201,168,76,.1)';zx.lineWidth=.8;zx.stroke();}
+  zx.beginPath();zx.arc(cx,cy,cR,0,Math.PI*2);zx.fillStyle='rgba(2,2,10,.92)';zx.fill();zx.strokeStyle='rgba(201,168,76,.38)';zx.lineWidth=1.4;zx.stroke();
+  zx.font='bold 28px serif';zx.fillStyle='#c9a84c';zx.textAlign='center';zx.textBaseline='middle';
+  zx.shadowColor='rgba(201,168,76,.9)';zx.shadowBlur=18;zx.fillText('ॐ',cx,cy-2);zx.shadowBlur=0;
+  zx.font='6.5px Rajdhani,sans-serif';zx.fillStyle='rgba(168,164,200,.55)';zx.fillText('राशि चक्र',cx,cy+13);
+  zr+=.035;requestAnimationFrame(dz);
+}dz();
+
+/* ── PARTICLES ── */
+var lp=document.getElementById('LP');
+for(var pi=0;pi<12;pi++){
+  var pe=document.createElement('div'),sz=Math.random()*2.5+.8;
+  pe.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:rgba(201,168,76,'+(Math.random()*.4+.07)+');left:'+(Math.random()*100)+'%;top:'+(100+Math.random()*20)+'%;animation:glow '+(Math.random()*12+8)+'s '+(Math.random()*8)+'s linear infinite;pointer-events:none;z-index:1';
+  lp.appendChild(pe);
+}
+
+})();
+</script>
+</body>
+</html>

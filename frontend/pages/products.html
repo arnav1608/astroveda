@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/products.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+
+  <nav class="navbar" id="navbar"></nav>
+
+  <section class="page-hero">
+    <div class="page-hero-badge">✦ Sacred Products ✦</div>
+    <h1>Astrology Products</h1>
+    <p>Authentic gemstones, Rudraksha, Yantras, and sacred items curated by Dr. Shastrijee for cosmic alignment and spiritual growth.</p>
+  </section>
+
+  <section class="products-section container">
+    <!-- Filters -->
+    <div class="products-toolbar reveal">
+      <div class="tabs" id="categoryTabs">
+        <button class="tab-btn active" onclick="filterProducts('all', this)">All</button>
+        <button class="tab-btn" onclick="filterProducts('gemstones', this)">💎 Gemstones</button>
+        <button class="tab-btn" onclick="filterProducts('rudraksha', this)">📿 Rudraksha</button>
+        <button class="tab-btn" onclick="filterProducts('yantras', this)">🔯 Yantras</button>
+        <button class="tab-btn" onclick="filterProducts('spiritual', this)">🕯️ Spiritual Items</button>
+      </div>
+      <div class="search-bar products-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search products..." id="productSearch" oninput="searchProducts()"/>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Empty State -->
+    <div class="products-empty hidden" id="productsEmpty">
+      <div class="empty-icon">🔍</div>
+      <h3>No Products Found</h3>
+      <p>Try a different search or category.</p>
+    </div>
+  </section>
+
+  <!-- Product Detail Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal product-modal">
+      <button class="modal-close" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button>
+      <div class="product-modal-content" id="productModalContent"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
+      <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li></ul></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/products.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+/* ============================================
+   AstroVeda – Animations CSS
+   ============================================ */
+
+/* Shooting Stars */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: shoot linear forwards;
+}
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, white);
+  transform-origin: right center;
+}
+@keyframes shoot {
+  0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; }
+  100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
+}
+
+/* Floating Zodiac */
+@keyframes floatZodiac {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+  33% { transform: translateY(-20px) rotate(5deg); opacity: 0.25; }
+  66% { transform: translateY(10px) rotate(-3deg); opacity: 0.1; }
+}
+
+/* Nebula Pulse */
+@keyframes nebulaPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+/* Constellation */
+@keyframes constellationGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Particle Float */
+@keyframes particleFloat {
+  0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(-100px) translateX(50px) rotate(360deg); opacity: 0; }
+}
+
+/* Glow Rotate */
+@keyframes glowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Blink Star */
+@keyframes blinkStar {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(0.6); }
+}
+
+/* Page Transition */
+.page-transition {
+  position: fixed; inset: 0; z-index: 99996;
+  background: var(--black);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.page-transition.in { transform: scaleY(1); transform-origin: bottom; }
+.page-transition.out { transform: scaleY(0); transform-origin: top; }
+
+/* Stagger Reveal */
+.stagger-reveal > * { opacity: 0; transform: translateY(20px); }
+.stagger-reveal.visible > *:nth-child(1) { animation: staggerIn 0.5s 0.1s ease forwards; }
+.stagger-reveal.visible > *:nth-child(2) { animation: staggerIn 0.5s 0.2s ease forwards; }
+.stagger-reveal.visible > *:nth-child(3) { animation: staggerIn 0.5s 0.3s ease forwards; }
+.stagger-reveal.visible > *:nth-child(4) { animation: staggerIn 0.5s 0.4s ease forwards; }
+.stagger-reveal.visible > *:nth-child(5) { animation: staggerIn 0.5s 0.5s ease forwards; }
+.stagger-reveal.visible > *:nth-child(6) { animation: staggerIn 0.5s 0.6s ease forwards; }
+@keyframes staggerIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Shimmer */
+.shimmer {
+  position: relative; overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmerSlide 2s ease infinite;
+}
+@keyframes shimmerSlide { to { transform: translateX(100%); } }
+
+/* Glow Border Animation */
+@keyframes glowBorderAnim {
+  0%, 100% { box-shadow: 0 0 10px rgba(201,168,76,0.3), inset 0 0 10px rgba(201,168,76,0.1); }
+  50% { box-shadow: 0 0 30px rgba(201,168,76,0.6), inset 0 0 20px rgba(201,168,76,0.2); }
+}
+.glow-border-anim { animation: glowBorderAnim 3s ease infinite; }
+
+/* Text Glow */
+@keyframes textGlowAnim {
+  0%, 100% { text-shadow: 0 0 10px rgba(201,168,76,0.5); }
+  50% { text-shadow: 0 0 30px rgba(201,168,76,0.9), 0 0 60px rgba(201,168,76,0.4); }
+}
+.text-glow-anim { animation: textGlowAnim 3s ease infinite; }
+
+/* Scale In */
+@keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.scale-in { animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+/* Slide In Right */
+@keyframes slideInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.slide-in-right { animation: slideInRight 0.5s ease forwards; }
+
+/* Slide In Left */
+@keyframes slideInLeft { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.slide-in-left { animation: slideInLeft 0.5s ease forwards; }
+
+/* Pulse Ring */
+.pulse-ring {
+  position: absolute; inset: -5px;
+  border: 2px solid var(--gold);
+  border-radius: inherit;
+  animation: pulseRing 2s ease infinite;
+}
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 0; }
+}

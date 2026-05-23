@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Announcements – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/announcements.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+
+  <nav class="navbar" id="navbar"></nav>
+
+  <section class="page-hero">
+    <div class="page-hero-badge">✦ Cosmic Updates ✦</div>
+    <h1>Announcements</h1>
+    <p>Stay updated with the latest news, cosmic events, special offers, and wisdom from Dr. Shastrijee.</p>
+  </section>
+
+  <section class="ann-section">
+    <div class="container">
+      <!-- Sort Bar — ABOVE the grid, full width -->
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:0;">
+        <button class="sort-btn active" onclick="setSortFilter('newest',this)" style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:.45rem 1rem;border-radius:20px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c;cursor:pointer;transition:all .3s;">🕐 Newest</button>
+        <button class="sort-btn" onclick="setSortFilter('popular',this)" style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:.45rem 1rem;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--silver);cursor:pointer;transition:all .3s;">🔥 Most Popular</button>
+        <button class="sort-btn" onclick="setSortFilter('featured',this)" style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:.45rem 1rem;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--silver);cursor:pointer;transition:all .3s;">⭐ Featured</button>
+        <button class="sort-btn" onclick="setSortFilter('events',this)" style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:.45rem 1rem;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--silver);cursor:pointer;transition:all .3s;">🌙 Events</button>
+        <button class="sort-btn" onclick="setSortFilter('offers',this)" style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:.45rem 1rem;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--silver);cursor:pointer;transition:all .3s;">🎁 Offers</button>
+      </div>
+    </div>
+    <div class="ann-layout container">
+      <div class="ann-feed" id="annFeed">
+        <!-- Posts rendered by JS -->
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="ann-sidebar">
+        <div class="sidebar-card glass-card">
+          <h4 class="sidebar-title">✦ About the Page</h4>
+          <p>Dr. Shastrijee shares cosmic insights, special offers, auspicious dates, and spiritual guidance here.</p>
+        </div>
+        <div class="sidebar-card glass-card">
+          <h4 class="sidebar-title">🌙 Upcoming Events</h4>
+          <div class="event-list">
+            <div class="event-item"><span class="event-dot"></span><div><strong>Solar Eclipse Webinar</strong><small>June 15, 2025</small></div></div>
+            <div class="event-item"><span class="event-dot"></span><div><strong>Navratri Special Reading</strong><small>Oct 3, 2025</small></div></div>
+            <div class="event-item"><span class="event-dot"></span><div><strong>Annual Muhurta Workshop</strong><small>Nov 20, 2025</small></div></div>
+          </div>
+        </div>
+        <div class="sidebar-card glass-card">
+          <h4 class="sidebar-title">🔮 Daily Cosmic Tip</h4>
+          <p class="daily-tip" id="dailyTip"></p>
+        </div>
+        <div class="sidebar-card glass-card">
+          <h4 class="sidebar-title">📞 Connect</h4>
+          <a href="https://wa.me/918863038223" target="_blank" class="whatsapp-sidebar-btn">
+            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+        </div>
+      </aside>
+    </div><!-- end ann-layout -->
+  </section>
+
+  <!-- Comment Modal -->
+  <div class="modal-overlay" id="commentModal">
+    <div class="modal comment-modal">
+      <button class="modal-close" onclick="closeModal('commentModal')"><i class="fas fa-times"></i></button>
+      <h3 class="modal-title">💬 Comments</h3>
+      <div class="comments-list" id="commentsList"></div>
+      <div class="comment-input-row">
+        <div class="avatar-placeholder" style="width:36px;height:36px;font-size:0.9rem;" id="commentAvatar">U</div>
+        <div class="comment-input-wrap">
+          <input type="text" class="form-input" id="commentInput" placeholder="Write a comment..." style="border-radius:25px;"/>
+          <button class="comment-send-btn" onclick="submitComment()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
+      <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li></ul></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/announcements.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+/* Appointment CSS - Full Update */
+.appt-section { padding: 2rem 2rem 6rem; }
+
+/* 3 service cards */
+.appt-services { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 3rem; }
+.appt-service-card { background:var(--glass-bg); border:2px solid var(--glass-border); border-radius:20px; padding:2rem 1.5rem; text-align:center; cursor:pointer; transition:all 0.3s; display:flex; flex-direction:column; gap:0.4rem; align-items:center; position:relative; overflow:hidden; }
+.appt-service-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle,rgba(201,168,76,0.1),transparent 70%); opacity:0; transition:0.3s; }
+.appt-service-card:hover,.appt-service-card.selected { border-color:var(--gold); box-shadow:var(--shadow-gold); }
+.appt-service-card:hover::before,.appt-service-card.selected::before { opacity:1; }
+.appt-service-card.selected { background:rgba(201,168,76,0.06); }
+.appt-service-icon { font-size:2.5rem; }
+.appt-service-card h4 { font-family:var(--font-ui); font-size:0.9rem; font-weight:700; color:var(--white); letter-spacing:0.03em; }
+.appt-service-price { font-family:var(--font-display); font-size:1.1rem; color:var(--gold); }
+.free-tag { color:#25d366 !important; font-family:var(--font-display); font-size:1.1rem; }
+.appt-service-note { font-size:0.78rem; color:var(--silver); line-height:1.4; }
+
+.appt-grid { display:grid; grid-template-columns:1fr 360px; gap:2.5rem; align-items:start; }
+.appt-form-wrap { padding:2.5rem; }
+.appt-form-title { font-family:var(--font-display); font-size:1.5rem; color:var(--gold); margin-bottom:1.5rem; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-hint { font-family:var(--font-ui); font-size:0.78rem; color:var(--silver); margin-top:0.3rem; display:block; }
+
+/* Birth details box */
+.birth-details-section { background:rgba(74,29,150,0.1); border:1px solid rgba(201,168,76,0.15); border-radius:16px; padding:1.5rem; margin:1.2rem 0; }
+.birth-details-header { display:flex; align-items:center; gap:0.8rem; margin-bottom:1.2rem; }
+.birth-details-icon { font-size:1.5rem; }
+.birth-details-header h4 { font-family:var(--font-ui); font-size:0.95rem; font-weight:700; color:var(--gold); letter-spacing:0.05em; }
+.birth-details-header small { color:var(--silver); font-size:0.78rem; font-weight:400; }
+
+.appt-submit-btn { width:100%; justify-content:center; margin-top:0.5rem; }
+
+/* Info Column */
+.appt-info-col { display:flex; flex-direction:column; gap:1.5rem; }
+.appt-info-card { padding:2rem; text-align:center; }
+.appt-info-avatar { font-size:4.5rem; color:var(--gold); opacity:0.35; margin-bottom:0.8rem; }
+.appt-info-card h3 { font-family:var(--font-display); font-size:1rem; color:var(--white); margin-bottom:0.3rem; }
+.appt-info-card > p { font-family:var(--font-ui); font-size:0.82rem; color:var(--silver); margin-bottom:1rem; }
+.appt-info-row { display:flex; align-items:center; gap:0.8rem; padding:0.55rem 0; font-family:var(--font-ui); font-size:0.84rem; color:var(--silver); border-bottom:1px solid rgba(201,168,76,0.07); }
+.appt-info-row i { color:var(--gold); width:16px; flex-shrink:0; }
+.appt-service-detail-card { padding:1.5rem; }
+.service-price-display { margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid rgba(201,168,76,0.15); }
+.appt-notice-card { padding:1.5rem; }
+.appt-notice-icon { font-size:2rem; margin-bottom:0.8rem; }
+.appt-notice-card h4 { font-family:var(--font-display); font-size:1rem; color:var(--gold); margin-bottom:1rem; }
+.appt-steps { list-style:none; display:flex; flex-direction:column; gap:0.7rem; }
+.appt-steps li { display:flex; align-items:center; gap:0.8rem; font-family:var(--font-ui); font-size:0.85rem; color:var(--silver); }
+.appt-steps li span { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--black); font-size:0.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+/* Payment Modal */
+.payment-modal-content { display:flex; flex-direction:column; gap:1rem; }
+.qr-placeholder { background:white; border-radius:12px; padding:1.5rem; width:180px; margin:0 auto; text-align:center; }
+.qr-inner { display:flex; flex-direction:column; align-items:center; gap:0.5rem; }
+.qr-grid { width:120px; height:120px; background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 0 0/10px 10px; border:3px solid #000; }
+.qr-label { font-family:var(--font-ui); font-size:0.75rem; color:#333; letter-spacing:0.1em; text-transform:uppercase; }
+.payment-amount { font-family:var(--font-display); font-size:1.3rem; color:var(--gold); text-align:center; padding:0.6rem; background:rgba(201,168,76,0.08); border-radius:10px; border:1px solid rgba(201,168,76,0.2); }
+.payment-whatsapp-box { display:flex; gap:1rem; align-items:flex-start; background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.2); border-radius:12px; padding:1rem; }
+.payment-whatsapp-box i { color:#25d366; font-size:1.8rem; flex-shrink:0; }
+.payment-whatsapp-box strong { display:block; font-family:var(--font-display); color:#25d366; margin-bottom:0.3rem; font-size:1rem; }
+.payment-whatsapp-box span { font-size:0.85rem; color:var(--silver); line-height:1.5; }
+
+/* Success */
+.booking-success-anim { padding:1rem 0; }
+.success-stars { font-size:1.5rem; letter-spacing:0.5rem; margin-bottom:1rem; }
+.success-icon-big { font-size:4rem; margin-bottom:1rem; animation:successPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+@keyframes successPop { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+.booking-success-anim h3 { font-family:var(--font-display); font-size:1.8rem; color:var(--gold); margin-bottom:0.5rem; }
+.booking-success-anim p { color:var(--silver); line-height:1.7; margin-bottom:1rem; }
+.booking-id-box { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.2); border-radius:10px; padding:0.8rem 1.2rem; font-family:var(--font-ui); font-size:0.9rem; color:var(--silver); margin-bottom:0.8rem; }
+.booking-id-box strong { color:var(--gold); font-size:1.1rem; }
+.booking-whatsapp-reminder { display:flex; align-items:center; gap:0.7rem; font-family:var(--font-ui); font-size:0.85rem; color:var(--silver); background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.15); border-radius:10px; padding:0.7rem 1rem; }
+.booking-whatsapp-reminder i { color:#25d366; }
+.booking-whatsapp-reminder strong { color:var(--white); }
+
+@media (max-width:1024px) { .appt-services{grid-template-columns:1fr 1fr 1fr;} .appt-grid{grid-template-columns:1fr;} }
+@media (max-width:700px) { .appt-services{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;} }

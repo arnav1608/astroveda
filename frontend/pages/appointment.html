@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
+  <link rel="stylesheet" href="../css/appointment.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+  <nav class="navbar" id="navbar"></nav>
+
+  <!-- Login Gate -->
+  <div id="apptLoginGate" style="display:none;position:relative;z-index:2;min-height:80vh;align-items:center;justify-content:center;padding:8rem 2rem 4rem;">
+    <div class="glass-card" style="max-width:480px;width:100%;padding:3rem;text-align:center;margin:0 auto;">
+      <div style="font-size:4rem;margin-bottom:1rem;">🔐</div>
+      <h2 style="font-family:var(--font-display);color:var(--gold);margin-bottom:0.8rem;">Login Required</h2>
+      <p style="color:var(--silver);line-height:1.7;margin-bottom:2rem;">You need to be logged in to book an appointment with Dr. Shastrijee.</p>
+      <a href="auth.html" class="btn-primary" style="display:inline-flex;justify-content:center;width:100%;"><i class="fas fa-sign-in-alt"></i><span>Login / Sign Up</span></a>
+    </div>
+  </div>
+
+  <div id="apptContent">
+    <section class="page-hero">
+      <div class="page-hero-badge">✦ Cosmic Consultation ✦</div>
+      <h1>Book Your Appointment</h1>
+      <p>Provide accurate birth details for precise Vedic predictions. Dr. Shastrijee will contact you to confirm your session.</p>
+    </section>
+
+    <section class="appt-section container">
+      <!-- Service Cards -->
+      <div class="appt-services reveal">
+        <div class="appt-service-card" id="svc0" onclick="selectService(this,'Free Consultation',0)">
+          <span class="appt-service-icon">🎁</span>
+          <h4>Free Consultation</h4>
+          <span class="appt-service-price free-tag">FREE</span>
+          <p class="appt-service-note">Introductory session — general life overview</p>
+        </div>
+        <div class="appt-service-card" id="svc1" onclick="selectService(this,'Detailed Jyotish Vishleshan',2500)">
+          <span class="appt-service-icon">🔮</span>
+          <h4>Detailed Jyotish Vishleshan</h4>
+          <span class="appt-service-price">₹2,500</span>
+          <p class="appt-service-note">All 12 houses, Dasha analysis, remedies</p>
+        </div>
+        <div class="appt-service-card" id="svc2" onclick="selectService(this,'Kundli Nirman (Birth Chart)',1500)">
+          <span class="appt-service-icon">📜</span>
+          <h4>Kundli Nirman</h4>
+          <span class="appt-service-price">₹1,500</span>
+          <p class="appt-service-note">Full birth chart + written report</p>
+        </div>
+      </div>
+
+      <div class="appt-grid">
+        <div class="appt-form-wrap glass-card reveal">
+          <h2 class="appt-form-title">Your Details</h2>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="apptName" placeholder="Your full name"/>
+            <div class="form-error" id="apptNameErr">Please enter your name.</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Mobile Number</label>
+              <input type="tel" class="form-input" id="apptMobile" placeholder="10-digit number" maxlength="10"/>
+              <div class="form-error" id="apptMobileErr">Enter valid 10-digit number.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email (Optional)</label>
+              <input type="email" class="form-input" id="apptEmail" placeholder="your@email.com"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Service Selected</label>
+            <select class="form-input" id="apptService" style="cursor:pointer;" onchange="selectServiceFromDropdown(this)">
+              <option value="">-- Select a Service --</option>
+              <option value="Free Consultation||0">🎁 Free Consultation — FREE</option>
+              <option value="Detailed Jyotish Vishleshan||2500">🔮 Detailed Jyotish Vishleshan — ₹2,500</option>
+              <option value="Kundli Nirman (Birth Chart)||1500">📜 Kundli Nirman — ₹1,500</option>
+            </select>
+            <div class="form-error" id="apptServiceErr">Please select a service.</div>
+          </div>
+
+          <!-- Birth Details -->
+          <div class="birth-details-section">
+            <div class="birth-details-header">
+              <span class="birth-details-icon">🔯</span>
+              <h4>Birth Details <small>(Required for accurate predictions)</small></h4>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" class="form-input" id="apptDOB"/>
+              <div class="form-error" id="apptDOBErr">Please enter date of birth.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time of Birth</label>
+              <input type="time" class="form-input" id="apptBirthTime"/>
+              <div class="form-error" id="apptBirthTimeErr">Please enter birth time.</div>
+              <small class="form-hint">⚠️ Exact birth time is crucial. Check your birth certificate.</small>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Birth City / Village</label>
+                <input type="text" class="form-input" id="apptBirthCity" placeholder="e.g. Patna"/>
+                <div class="form-error" id="apptBirthCityErr">Please enter birth city.</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Birth District</label>
+                <input type="text" class="form-input" id="apptBirthDistrict" placeholder="e.g. Patna"/>
+                <div class="form-error" id="apptBirthDistrictErr">Please enter district.</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Birth State / Country</label>
+              <input type="text" class="form-input" id="apptBirthState" placeholder="e.g. Bihar, India"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your Question / Message</label>
+            <textarea class="form-textarea" id="apptMessage" placeholder="What would you like guidance on? (Career, marriage, health, spiritual growth...)"></textarea>
+          </div>
+          <button class="btn-primary appt-submit-btn" id="apptSubmitBtn">
+            <span>Book Appointment</span><i class="fas fa-calendar-check"></i>
+          </button>
+        </div>
+
+        <div class="appt-info-col">
+          <div class="appt-info-card glass-card reveal">
+            <div class="appt-info-avatar"><i class="fas fa-user-circle"></i></div>
+            <h3>Dr. Rajesh R Shastrijee</h3>
+            <p>Vedic Astrologer · 25+ Years</p>
+            <hr class="divider divider-gold"/>
+            <div class="appt-info-row"><i class="fas fa-phone"></i> +91 8863038229</div>
+            <div class="appt-info-row"><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</div>
+            <div class="appt-info-row"><i class="fab fa-whatsapp"></i> +91 8863038229</div>
+            <div class="appt-info-row"><i class="fas fa-video"></i> Online Only (Video / WhatsApp / Phone)</div>
+            <div class="appt-info-row"><i class="fas fa-language"></i> Hindi · English</div>
+          </div>
+          <div class="appt-service-detail-card glass-card reveal" id="serviceDetailCard" style="display:none;">
+            <div id="serviceDetailIcon" style="font-size:2rem;margin-bottom:0.5rem;"></div>
+            <h4 id="serviceDetailName" style="font-family:var(--font-display);color:var(--gold);margin-bottom:0.4rem;font-size:0.95rem;"></h4>
+            <p id="serviceDetailDesc" style="color:var(--silver);font-size:0.85rem;line-height:1.6;margin-bottom:0.8rem;"></p>
+            <div id="servicePriceDisplay"></div>
+          </div>
+          <div class="appt-notice-card glass-card reveal">
+            <div class="appt-notice-icon">💡</div>
+            <h4>How it Works</h4>
+            <ol class="appt-steps">
+              <li><span>1</span> Fill & submit this form</li>
+              <li><span>2</span> For paid services — scan QR & pay</li>
+              <li><span>3</span> Send payment screenshot on WhatsApp</li>
+              <li><span>4</span> Receive confirmation from Dr. Shastrijee</li>
+              <li><span>5</span> Attend your consultation</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('paymentModal')"><i class="fas fa-times"></i></button>
+      <div class="payment-modal-content">
+        <h3>💫 Complete Payment</h3>
+        <p>Scan the QR code and complete payment to confirm your booking.</p>
+        <div class="qr-placeholder"><div class="qr-inner"><div class="qr-grid"></div><p class="qr-label">Scan to Pay</p></div></div>
+        <div class="payment-amount" id="paymentAmount">Amount: ₹2,500</div>
+        <div class="payment-whatsapp-box">
+          <i class="fab fa-whatsapp"></i>
+          <div><strong>+91 8863038229</strong><span>Send payment screenshot to this WhatsApp number after paying.</span></div>
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center;margin-top:1rem;" id="confirmPayBtn">
+          <span>I've Sent the Screenshot ✓</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal" style="text-align:center;">
+      <div class="booking-success-anim">
+        <div style="font-size:1.5rem;letter-spacing:0.5rem;margin-bottom:1rem;">✨ ⭐ 🌟 ⭐ ✨</div>
+        <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
+        <h3 style="font-family:var(--font-display);font-size:1.8rem;color:var(--gold);margin-bottom:0.5rem;">Booking Confirmed!</h3>
+        <p style="color:var(--silver);margin-bottom:1rem;">Dr. Shastrijee will contact you shortly to confirm your session.</p>
+        <div class="booking-id-box">Booking ID: <strong id="bookingId"></strong></div>
+        <div class="booking-whatsapp-reminder"><i class="fab fa-whatsapp"></i><span>For queries: <strong>+91 8863038229</strong></span></div>
+        <a href="../index.html" class="btn-primary" style="display:inline-flex;margin-top:1.5rem;"><span>Back to Home</span><i class="fas fa-home"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fas fa-phone"></i> +91 8863038229</p><p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/appointment.js"></script>
+</body>
+</html>

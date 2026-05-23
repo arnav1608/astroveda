@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/profile.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+
+  <nav class="navbar" id="navbar"></nav>
+
+  <!-- Guest Banner -->
+  <div class="guest-banner" id="guestBanner">
+    <i class="fas fa-user-circle"></i>
+    <span>You're not logged in. <a href="auth.html">Login or Sign Up</a> to view your profile.</span>
+  </div>
+
+  <!-- Profile Section -->
+  <section class="profile-section" id="profileSection" style="display:none;">
+    <!-- Cover -->
+    <div class="profile-cover" id="profileCover">
+      <div class="profile-cover-overlay"></div>
+      <div class="cover-stars" id="coverStars"></div>
+      <button class="cover-edit-btn" onclick="changeCover()"><i class="fas fa-camera"></i> Change Cover</button>
+    </div>
+
+    <div class="profile-main container">
+      <!-- Avatar -->
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatarDisplay">A</div>
+        <button class="avatar-edit-btn" onclick="changeAvatar()"><i class="fas fa-camera"></i></button>
+        <div class="profile-glow-ring"></div>
+      </div>
+
+      <div class="profile-identity">
+        <h2 class="profile-name" id="profileName">Astro User</h2>
+        <p class="profile-username" id="profileUsername">@username</p>
+        <p class="profile-bio" id="profileBio">No bio added yet.</p>
+        <div class="profile-meta-row">
+          <span id="profileLocation"><i class="fas fa-map-marker-alt"></i> Not set</span>
+          <span id="profileMobile"><i class="fas fa-phone"></i> Hidden</span>
+          <span><i class="fas fa-calendar-alt"></i> Joined <span id="profileJoined">-</span></span>
+        </div>
+      </div>
+      <button class="btn-primary edit-profile-btn" onclick="openEditModal()">
+        <i class="fas fa-edit"></i> <span>Edit Profile</span>
+      </button>
+    </div>
+
+    <!-- Profile Tabs -->
+    <div class="profile-tabs-wrap container">
+      <div class="tabs profile-tabs">
+        <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+        <button class="tab-btn" onclick="switchTab('appointments', this)">Appointments</button>
+        <button class="tab-btn" onclick="switchTab('saved', this)">Saved</button>
+        <button class="tab-btn" onclick="switchTab('activity', this)">Activity</button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="profile-content container">
+
+      <!-- Overview -->
+      <div class="tab-panel active" id="tab-overview">
+        <div class="overview-grid">
+          <div class="profile-info-card glass-card">
+            <h4 class="card-section-title">Personal Information</h4>
+            <div class="info-row"><i class="fas fa-user"></i><span id="infoName">-</span></div>
+            <div class="info-row"><i class="fas fa-at"></i><span id="infoUsername">-</span></div>
+            <div class="info-row"><i class="fas fa-phone"></i><span id="infoMobile">-</span></div>
+            <div class="info-row"><i class="fas fa-map-marker-alt"></i><span id="infoLocation">-</span></div>
+          </div>
+          <div class="profile-info-card glass-card">
+            <h4 class="card-section-title">Astrology Interests</h4>
+            <div class="interests-wrap" id="interestsWrap"></div>
+          </div>
+          <div class="profile-stats-card glass-card">
+            <h4 class="card-section-title">My Stats</h4>
+            <div class="profile-stats-grid">
+              <div class="pstat"><div class="pstat-num" id="statBookings">0</div><div class="pstat-label">Bookings</div></div>
+              <div class="pstat"><div class="pstat-num" id="statSaved">0</div><div class="pstat-label">Saved</div></div>
+              <div class="pstat"><div class="pstat-num">5</div><div class="pstat-label">Posts Liked</div></div>
+              <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Comments</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments -->
+      <div class="tab-panel" id="tab-appointments">
+        <h3 class="tab-section-title">Appointment History</h3>
+        <div id="appointmentHistory" class="appt-history-list"></div>
+      </div>
+
+      <!-- Saved -->
+      <div class="tab-panel" id="tab-saved">
+        <h3 class="tab-section-title">Saved Products</h3>
+        <div id="savedProductsList" style="display:flex;flex-direction:column;gap:.8rem;"></div>
+      </div>
+
+      <!-- Activity -->
+      <div class="tab-panel" id="tab-activity">
+        <h3 class="tab-section-title">Recent Activity</h3>
+        <div class="activity-list" id="activityList"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal edit-modal">
+      <button class="modal-close" onclick="closeModal('editModal')"><i class="fas fa-times"></i></button>
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.5rem;">Edit Profile</h3>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="editName" placeholder="Your full name"/></div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-textarea" id="editBio" placeholder="Tell us about yourself..." style="min-height:80px;"></textarea></div>
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Location</label><input type="text" class="form-input" id="editLocation" placeholder="City, Country"/></div>
+        <div class="form-group"><label class="form-label">Age</label><input type="number" class="form-input" id="editAge" placeholder="Your age" min="1" max="120"/></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Astrology Interests</label>
+        <div class="interests-selector" id="interestsSelector">
+          <label class="interest-opt"><input type="checkbox" value="Birth Chart"/> Birth Chart</label>
+          <label class="interest-opt"><input type="checkbox" value="Compatibility"/> Compatibility</label>
+          <label class="interest-opt"><input type="checkbox" value="Career"/> Career</label>
+          <label class="interest-opt"><input type="checkbox" value="Health"/> Health</label>
+          <label class="interest-opt"><input type="checkbox" value="Vastu"/> Vastu</label>
+          <label class="interest-opt"><input type="checkbox" value="Muhurta"/> Muhurta</label>
+          <label class="interest-opt"><input type="checkbox" value="Gemstones"/> Gemstones</label>
+          <label class="interest-opt"><input type="checkbox" value="Meditation"/> Meditation</label>
+        </div>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" onclick="saveProfile()">
+        <i class="fas fa-save"></i> <span>Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
+      <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li></ul></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/profile.js"></script>
+</body>
+</html>
