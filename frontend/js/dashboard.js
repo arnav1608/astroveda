@@ -1,5 +1,6 @@
 // ============================================
-// AstroVeda – Dashboard JS (Clean Final v5)
+// AstroVeda – Dashboard JS (Clean Final v6)
+// All data loads from MongoDB — works on every device
 // ============================================
 
 const API = (window.ASTROVEDA_API) || (window.location.port === '5000' ? '/api' : 'http://localhost:5000/api');
@@ -15,7 +16,6 @@ function authHeaders() { return { 'Content-Type': 'application/json', 'Authoriza
     var wrap = document.getElementById('dashboardWrap');
     if (gate) gate.style.display = 'none';
     if (wrap) wrap.style.display = 'flex';
-    // If no token stored yet, try to get one from backend silently
     if (!localStorage.getItem('astroveda_token')) {
       fetch(API + '/auth/mod-login', {
         method: 'POST',
@@ -41,13 +41,7 @@ function updateClock() {
 function initDashboard() {
   updateClock();
   setInterval(updateClock, 30000);
-  renderOverview();
-  loadUsersFromAPI();
-  renderBookingsTable();
-  renderProductsTable();
-  renderPostsTable();
-  renderFeedbackList();
-  // Show QR thumb if saved
+  loadAllDataFromAPI();
   var s = JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');
   if (s.qrCode) {
     var thumb = document.getElementById('qrPreviewThumb');
@@ -55,6 +49,82 @@ function initDashboard() {
     if (thumb && img) { img.src = s.qrCode; thumb.style.display='block'; }
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// MASTER DATA LOADER — fetches ALL data from MongoDB
+// Works on every device regardless of localStorage state
+// ═══════════════════════════════════════════════════════════════
+function loadAllDataFromAPI() {
+  var headers = authHeaders();
+
+  // 1. Users
+  fetch(API + '/users', { headers: headers })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success && d.users && d.users.length)
+        localStorage.setItem('astroveda_users', JSON.stringify(d.users));
+      renderOverview(); renderUsersTable();
+    })
+    .catch(function(){ renderOverview(); renderUsersTable(); });
+
+  // 2. Bookings
+  fetch(API + '/appointments', { headers: headers })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success && d.appointments && d.appointments.length) {
+        var normalized = d.appointments.map(function(a){
+          return {
+            id: a.bookingId || a._id,
+            mongoId: a._id,
+            name: a.name, mobile: a.mobile, email: a.email||'',
+            service: a.service, price: a.price||0,
+            dob: a.dob||'', birthTime: a.birthTime||'',
+            birthCity: a.birthCity||'', birthDistrict: a.birthDistrict||'',
+            birthState: a.birthState||'', message: a.message||'',
+            status: a.status||'Pending', bookedAt: a.createdAt
+          };
+        });
+        localStorage.setItem('astroveda_bookings', JSON.stringify(normalized));
+      }
+      renderBookingsTable(); renderOverview();
+    })
+    .catch(function(){ renderBookingsTable(); });
+
+  // 3. Feedback
+  fetch(API + '/feedback', { headers: headers })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success && d.feedbacks && d.feedbacks.length) {
+        var normalized = d.feedbacks.map(function(f){
+          return { id: f._id, name: f.name, msg: f.message, time: f.createdAt };
+        });
+        localStorage.setItem('astroveda_feedbacks', JSON.stringify(normalized));
+        renderFeedbackList();
+      }
+    })
+    .catch(function(){});
+
+  // 4. Testimonials
+  fetch(API + '/testimonials')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success && d.testimonials && d.testimonials.length) {
+        var normalized = d.testimonials.map(function(t){
+          return { id:t._id, name:t.name, location:t.location, text:t.text, rating:t.rating, status:t.status||'pending' };
+        });
+        localStorage.setItem('astroveda_testimonials', JSON.stringify(normalized));
+      }
+    })
+    .catch(function(){});
+
+  // 5. Local-only (no API needed)
+  renderProductsTable();
+  renderPostsTable();
+  renderFeedbackList();
+}
+
+// Refresh button alias
+function loadUsersFromAPI() { loadAllDataFromAPI(); }
 
 function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
@@ -67,10 +137,8 @@ function switchDash(name, btn) {
   document.querySelectorAll('.dash-nav-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('panel-' + name)?.classList.add('active');
   if (btn) { btn.classList.add('active'); var t = document.getElementById('dashTitle'); if (t) t.textContent = btn.textContent.trim(); }
-  // FIX: Auto-close sidebar on mobile when a nav item is clicked
-  if (window.innerWidth <= 900) {
-    document.getElementById('dashSidebar')?.classList.remove('open');
-  }
+  // Auto-close sidebar on mobile
+  if (window.innerWidth <= 900) document.getElementById('dashSidebar')?.classList.remove('open');
   if (name === 'reviews')      renderReviewsPanel();
   if (name === 'rashi')        renderRashiEditor();
   if (name === 'achievements') renderAchievementsPanel();
@@ -79,36 +147,8 @@ function switchDash(name, btn) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// OVERVIEW — loads users + feedback from API
+// OVERVIEW
 // ═══════════════════════════════════════════════════════════════
-function loadUsersFromAPI() {
-  // FIX 1: fetch fresh users from MongoDB, merge with localStorage
-  fetch(API + '/users', { headers: authHeaders() })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.success && d.users && d.users.length) {
-        localStorage.setItem('astroveda_users', JSON.stringify(d.users));
-      }
-      renderOverview(); renderUsersTable();
-    })
-    .catch(function() { renderOverview(); renderUsersTable(); });
-
-  // FIX 2: also fetch feedback from MongoDB
-  fetch(API + '/feedback', { headers: authHeaders() })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.success && d.feedbacks && d.feedbacks.length) {
-        // Normalize MongoDB feedback to match localStorage format
-        var normalized = d.feedbacks.map(function(f) {
-          return { id: f._id, name: f.name, msg: f.message, time: f.createdAt };
-        });
-        localStorage.setItem('astroveda_feedbacks', JSON.stringify(normalized));
-        renderFeedbackList();
-      }
-    })
-    .catch(function() {}); // silently fail — localStorage fallback
-}
-
 function renderOverview() {
   var users     = JSON.parse(localStorage.getItem('astroveda_users')        || '[]');
   var bookings  = JSON.parse(localStorage.getItem('astroveda_bookings')     || '[]');
@@ -119,7 +159,6 @@ function renderOverview() {
   try{f2=JSON.parse(localStorage.getItem('astroveda_feedback')||'[]');}catch(e){}
   var feedbacks = f1.concat(f2);
   var pending   = reviews.filter(function(r) { return r.status === 'pending'; }).length;
-
   var grid = document.getElementById('dashStatsGrid');
   if (grid) {
     var stats = [
@@ -137,13 +176,11 @@ function renderOverview() {
         + '<div class="dash-stat-label">'+s.label+'</div></div>';
     }).join('');
   }
-
   var rb = document.getElementById('recentBookings');
   if (rb) rb.innerHTML = ([...bookings].reverse().slice(0,5)).map(function(b) {
     var sc = b.status==='Confirmed'?'#25d366':b.status==='Completed'?'#48cae4':b.status==='Cancelled'?'#ff6b6b':'#feca57';
     return '<div class="dash-recent-row"><span>'+b.name+'</span><span class="tag tag-gold" style="font-size:.72rem;">'+b.service+'</span><span style="font-family:var(--font-ui);font-size:.75rem;color:'+sc+';">'+b.status+'</span></div>';
   }).join('') || '<p style="color:var(--silver);font-size:.85rem;">No bookings yet.</p>';
-
   var rs = document.getElementById('recentSignups');
   if (rs) rs.innerHTML = ([...users].reverse().slice(0,5)).map(function(u) {
     return '<div class="dash-recent-row"><span>'+u.name+'</span><span style="font-family:var(--font-ui);font-size:.78rem;color:var(--silver);">@'+u.username+'</span><span style="font-family:var(--font-ui);font-size:.78rem;color:var(--silver);">'+u.mobile+'</span></div>';
@@ -207,28 +244,63 @@ function deleteUser(id) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BOOKINGS
+// BOOKINGS — compact table + full details modal
 // ═══════════════════════════════════════════════════════════════
 function renderBookingsTable() {
   var q=(document.getElementById('bookingSearch')?.value||'').toLowerCase();
   var bookings=JSON.parse(localStorage.getItem('astroveda_bookings')||'[]')
-    .filter(function(b){return!q||b.name?.toLowerCase().includes(q)||b.service?.toLowerCase().includes(q)||(b.id||'').toLowerCase().includes(q);});
+    .filter(function(b){return!q||b.name?.toLowerCase().includes(q)||b.mobile?.includes(q)||(b.id||'').toLowerCase().includes(q);});
   var cnt=document.getElementById('bookingCount');if(cnt)cnt.textContent=bookings.length+' Bookings';
   var body=document.getElementById('bookingsTableBody');if(!body)return;
   var sc={Confirmed:'#25d366',Completed:'#48cae4',Cancelled:'#ff6b6b',Pending:'#feca57'};
   body.innerHTML=bookings.length?[...bookings].reverse().map(function(b){
     var c=sc[b.status]||'#feca57';
-    var ph=b.price===0?'<span style="color:#25d366;font-weight:700;">FREE</span>':'₹'+(b.price||0).toLocaleString('en-IN');
+    var bookDate=b.bookedAt?new Date(b.bookedAt).toLocaleDateString('en-IN'):(b.dob||'-');
     var opts=['Pending','Confirmed','Completed','Cancelled'].map(function(s){return'<option'+(b.status===s?' selected':'')+'>'+s+'</option>';}).join('');
-    return'<tr><td style="font-family:var(--font-ui);font-size:.75rem;color:var(--gold);">'+(b.id||'-')+'</td>'
-      +'<td>'+b.name+'</td><td>'+b.mobile+'</td><td style="font-size:.82rem;">'+b.service+'</td>'
-      +'<td style="font-size:.78rem;color:var(--silver);">'+(b.dob||'-')+'</td>'
-      +'<td>'+ph+'</td>'
-      +'<td><select class="dash-status-select" style="background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:8px;color:'+c+';font-family:var(--font-ui);font-size:.78rem;padding:.3rem .5rem;cursor:pointer;" onchange="updateBookingStatus(\''+b.id+'\',this.value)">'+opts+'</select></td>'
-      +'<td><button class="dash-action-btn delete" onclick="deleteBooking(\''+b.id+'\')"><i class="fas fa-trash"></i></button></td>'
-      +'</tr>';
-  }).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--silver);padding:2rem;">No bookings yet.</td></tr>';
+    var bid=b.id||b.mongoId||'';
+    return'<tr>'
+      +'<td style="font-family:var(--font-ui);font-size:.72rem;color:var(--gold);">'+bid+'</td>'
+      +'<td style="font-weight:600;">'+b.name+'</td>'
+      +'<td>'+b.mobile+'</td>'
+      +'<td style="font-size:.78rem;color:var(--silver);">'+bookDate+'</td>'
+      +'<td><select class="dash-status-select" style="background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:8px;color:'+c+';font-family:var(--font-ui);font-size:.78rem;padding:.3rem .5rem;cursor:pointer;" onchange="updateBookingStatus(this.getAttribute(\'data-bid\'),this.value)" data-bid="'+bid+'">'+opts+'</select></td>'
+      +'<td class="dash-actions">'
+      +'<button class="dash-action-btn edit" onclick="viewBooking(\''+bid+'\')" title="View All Details"><i class="fas fa-eye"></i></button>'
+      +'<button class="dash-action-btn delete" onclick="deleteBooking(\''+bid+'\')" title="Delete"><i class="fas fa-trash"></i></button>'
+      +'</td></tr>';
+  }).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--silver);padding:2rem;">No bookings yet.</td></tr>';
 }
+
+function viewBooking(id) {
+  var bookings=JSON.parse(localStorage.getItem('astroveda_bookings')||'[]');
+  var b=bookings.find(function(x){return String(x.id)===String(id)||String(x.mongoId)===String(id);});if(!b)return;
+  var sc={Confirmed:'#25d366',Completed:'#48cae4',Cancelled:'#ff6b6b',Pending:'#feca57'};
+  var c=sc[b.status]||'#feca57';
+  var ph=b.price===0?'FREE (₹0)':'₹'+(b.price||0).toLocaleString('en-IN');
+  function row(icon,label,val){return (val&&val!=='-')?'<div style="padding:.4rem 0;border-bottom:1px solid rgba(201,168,76,.07);font-family:var(--font-ui);font-size:.84rem;color:var(--silver);">'+icon+' <strong style="color:var(--white);margin-right:.3rem;">'+label+':</strong>'+val+'</div>':'';}
+  document.getElementById('userDetailContent').innerHTML=
+    '<div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;">'
+    +'<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#020210;flex-shrink:0;">'+b.name.charAt(0)+'</div>'
+    +'<div><h3 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:.2rem;">'+b.name+'</h3>'
+    +'<span style="font-family:var(--font-ui);font-size:.75rem;padding:.15rem .6rem;border-radius:20px;background:rgba(201,168,76,.1);color:'+c+';border:1px solid rgba(201,168,76,.2);">'+b.status+'</span></div></div>'
+    +row('🆔','Booking ID',b.id||b.mongoId||'-')
+    +row('📱','Mobile',b.mobile)
+    +row('🔮','Service',b.service)
+    +row('💰','Amount','<span style="color:#feca57;font-weight:700;">'+ph+'</span>')
+    +row('🎂','Date of Birth',b.dob||'-')
+    +row('⏰','Birth Time',b.birthTime||'-')
+    +row('🏠','Birth City',b.birthCity||'-')
+    +row('📍','District',b.birthDistrict||'-')
+    +row('🗺️','State/Country',b.birthState||'-')
+    +row('✉️','Email',b.email||'-')
+    +(b.message?'<div style="margin-top:.6rem;padding:.6rem;background:rgba(255,255,255,.03);border-radius:8px;font-family:var(--font-ui);font-size:.82rem;color:var(--silver);"><strong style="color:var(--white);">💬 Message:</strong><br/>'+b.message+'</div>':'')
+    +'<div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;">'
+    +'<a href="https://wa.me/91'+b.mobile+'" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:#25d366;border-radius:8px;padding:.4rem .9rem;font-family:var(--font-ui);font-size:.8rem;text-decoration:none;"><i class="fab fa-whatsapp"></i> WhatsApp</a>'
+    +'<a href="tel:'+b.mobile+'" style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(72,202,228,.1);border:1px solid rgba(72,202,228,.25);color:#48cae4;border-radius:8px;padding:.4rem .9rem;font-family:var(--font-ui);font-size:.8rem;text-decoration:none;"><i class="fas fa-phone"></i> Call</a>'
+    +'</div>';
+  openModal('userDetailModal');
+}
+
 function updateBookingStatus(id,status) {
   var bookings=JSON.parse(localStorage.getItem('astroveda_bookings')||'[]');
   var b=bookings.find(function(x){return String(x.id)===String(id)||String(x.mongoId)===String(id);});
@@ -239,12 +311,12 @@ function updateBookingStatus(id,status) {
 }
 function deleteBooking(id) {
   if(!confirm('Delete this booking?'))return;
-  localStorage.setItem('astroveda_bookings',JSON.stringify(JSON.parse(localStorage.getItem('astroveda_bookings')||'[]').filter(function(b){return b.id!==id;})));
+  localStorage.setItem('astroveda_bookings',JSON.stringify(JSON.parse(localStorage.getItem('astroveda_bookings')||'[]').filter(function(b){return String(b.id)!==String(id)&&String(b.mongoId)!==String(id);})));
   renderBookingsTable();renderOverview();
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PRODUCTS — 38 defaults auto-load, no button needed
+// PRODUCTS — 38 defaults auto-load
 // ═══════════════════════════════════════════════════════════════
 var productImgData='';
 function previewProductImg(input) {
@@ -469,14 +541,13 @@ function saveRashiGuidance(){
   closeModal('rashiEditModal');alert('Saved '+sign+' guidance!');
 }
 
-// ══ Image compression helper ═════════════════════════════════════════════════════════════
-// Compresses any base64 image to max 700x700 at 65% quality (~80-150KB each)
-// Prevents localStorage QuotaExceededError with multiple images
+// ═══════════════════════════════════════════════════════════════
+// IMAGE COMPRESSION & SAFE STORAGE
+// ═══════════════════════════════════════════════════════════════
 function compressImage(base64, callback) {
   var img = new Image();
   img.onload = function() {
-    var MAX = 700;
-    var w = img.naturalWidth, h = img.naturalHeight;
+    var MAX = 700, w = img.naturalWidth, h = img.naturalHeight;
     if (w > MAX || h > MAX) {
       if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
       else       { w = Math.round(w * MAX / h); h = MAX; }
@@ -486,25 +557,21 @@ function compressImage(base64, callback) {
     c.getContext('2d').drawImage(img, 0, 0, w, h);
     callback(c.toDataURL('image/jpeg', 0.65));
   };
-  img.onerror = function() { callback(base64); }; // fallback to original
+  img.onerror = function() { callback(base64); };
   img.src = base64;
 }
 
-// Safe localStorage setter — shows alert if quota exceeded
 function safeSetItem(key, value) {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  } catch(e) {
-    if (e.name === 'QuotaExceededError' || e.code === 22) {
-      alert('⚠️ Storage full! Images are too large to save locally.\nTip: Use smaller images (under 500KB each) or use an image URL instead.');
-    }
+  try { localStorage.setItem(key, value); return true; }
+  catch(e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22)
+      alert('⚠️ Storage full! Use smaller images (under 500KB) or paste an image URL instead.');
     return false;
   }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ACHIEVEMENTS — multi-image (10) + crop
+// ACHIEVEMENTS — multi-image + crop + MongoDB sync
 // ═══════════════════════════════════════════════════════════════
 var achImagesList=[],achImgData='',achCropImg=null,achCropOffset={x:0,y:0},achCropDragging=false,achCropDragStart={x:0,y:0},achCropPendingIdx=0,achCropFiles=[];
 
@@ -533,25 +600,17 @@ function setupAchCropDrag(canvas){
 }
 function confirmAchCrop(){
   var canvas=document.getElementById('achCropCanvas');if(!canvas)return;
-  // Compress the cropped canvas output before storing
-  var rawData=canvas.toDataURL('image/jpeg',0.88);
-  compressImage(rawData,function(compressed){
-    achImagesList.push(compressed);
-    if(achImagesList.length===1)achImgData=compressed;
-    achCropPendingIdx++;loadNextAchCrop();
+  compressImage(canvas.toDataURL('image/jpeg',0.88),function(compressed){
+    achImagesList.push(compressed);if(achImagesList.length===1)achImgData=compressed;achCropPendingIdx++;loadNextAchCrop();
   });
 }
 function skipAchCrop(){
   if(achCropImg){
-    // Compress original image before storing
-    var tmp=document.createElement('canvas');
-    var MAX=700,w=achCropImg.naturalWidth,h=achCropImg.naturalHeight;
+    var tmp=document.createElement('canvas'),MAX=700,w=achCropImg.naturalWidth,h=achCropImg.naturalHeight;
     if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
-    tmp.width=w;tmp.height=h;
-    tmp.getContext('2d').drawImage(achCropImg,0,0,w,h);
+    tmp.width=w;tmp.height=h;tmp.getContext('2d').drawImage(achCropImg,0,0,w,h);
     var compressed=tmp.toDataURL('image/jpeg',0.65);
-    achImagesList.push(compressed);
-    if(achImagesList.length===1)achImgData=compressed;
+    achImagesList.push(compressed);if(achImagesList.length===1)achImgData=compressed;
   }
   achCropPendingIdx++;loadNextAchCrop();
 }
@@ -605,20 +664,15 @@ function saveAchievement(){
   var editId=document.getElementById('editAchId')?.value;
   var achievements=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
   var imgUrl=(document.getElementById('achImgUrl')?.value||'').trim();
-
-  if(achImagesList.length===0 && achCropImg) {
+  if(achImagesList.length===0&&achCropImg){
     var MAX=700,w=achCropImg.naturalWidth,h=achCropImg.naturalHeight;
     if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
-    var tmp=document.createElement('canvas');
-    tmp.width=w;tmp.height=h;
+    var tmp=document.createElement('canvas');tmp.width=w;tmp.height=h;
     tmp.getContext('2d').drawImage(achCropImg,0,0,w,h);
-    var compressed=tmp.toDataURL('image/jpeg',0.65);
-    achImagesList=[compressed]; achImgData=compressed;
+    var compressed=tmp.toDataURL('image/jpeg',0.65);achImagesList=[compressed];achImgData=compressed;
   }
-
   var primaryImg=achImagesList.length>0?achImagesList[0]:(achImgData||'');
   var item={type:type,title:title,org:document.getElementById('achOrg')?.value||'',desc:document.getElementById('achDesc')?.value||'',imageData:primaryImg,imageUrl:imgUrl,images:achImagesList.length>1?achImagesList:undefined};
-
   if(editId){
     var idx=achievements.findIndex(function(a){return a.id==editId;});
     if(idx>-1)achievements[idx]=Object.assign(achievements[idx],item);
@@ -627,109 +681,97 @@ function saveAchievement(){
   } else {
     achievements.push(Object.assign({id:Date.now()},item));
     safeSetItem('astroveda_custom_achievements',JSON.stringify(achievements));
-
-    // Save to MongoDB — sends imageData as base64 in JSON body
     var sm={award:'awards',certificate:'certificates',medal:'medals',photo:'photos'};
     var payload={title:title,subtitle:item.org||'',desc:item.desc||'',imageData:primaryImg,imageUrl:imgUrl};
     fetch(API+'/achievements/'+(sm[type]||'awards'),{
       method:'POST',
-      headers:Object.assign({'Content-Type':'application/json'},{'Authorization':'Bearer '+getToken()}),
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
       body:JSON.stringify(payload)
-    })
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success && d.items) {
-        // Update localStorage with server-assigned IDs
-        var serverItems = d.items.map(function(si){
-          return {id:si._id||si.id,type:type,title:si.title||title,org:si.subtitle||item.org,desc:si.desc||item.desc,imageData:primaryImg,imageUrl:si.imageUrl||imgUrl};
-        });
-        safeSetItem('astroveda_custom_achievements_'+sm[type], JSON.stringify(serverItems));
-      }
-    })
-    .catch(function(){});
-
+    }).catch(function(){});
     closeModal('addAchModal');renderAchievementsPanel();achImgData='';achImagesList=[];achCropImg=null;
   }
 }
-function deleteAchievement(id){if(!confirm('Delete?'))return;localStorage.setItem('astroveda_custom_achievements',JSON.stringify(JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){return a.id!=id;})));renderAchievementsPanel();}
+function deleteAchievement(id){
+  if(!confirm('Delete?'))return;
+  localStorage.setItem('astroveda_custom_achievements',JSON.stringify(JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){return a.id!=id;})));
+  renderAchievementsPanel();
+}
 function clearAllAchievements(){if(!confirm('Delete ALL achievements?'))return;localStorage.removeItem('astroveda_custom_achievements');renderAchievementsPanel();alert('All achievements cleared.');}
 
 function renderAchievementsPanel(){
-  var all=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
+  // Immediately render from localStorage
+  renderSingleTable('award','awardsManager');
+  renderSingleTable('certificate','certificatesManager');
+  renderSingleTable('medal','medalsManager');
+  renderSingleTable('photo','photosManager');
 
-  // Also load from MongoDB so mobile dashboard shows items added from laptop
-  ['awards','certificates','medals','photos'].forEach(function(section){
-    var typeMap={awards:'award',certificates:'certificate',medals:'medal',photos:'photo'};
-    var type=typeMap[section];
+  // Also fetch from MongoDB (cross-device sync)
+  var sections={awards:'award',certificates:'certificate',medals:'medal',photos:'photo'};
+  var containerIds={awards:'awardsManager',certificates:'certificatesManager',medals:'medalsManager',photos:'photosManager'};
+  Object.keys(sections).forEach(function(section){
+    var type=sections[section];
     fetch(API+'/achievements/'+section)
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.success&&d.items&&d.items.length){
-          var containerId={awards:'awardsManager',certificates:'certificatesManager',medals:'medalsManager',photos:'photosManager'}[section];
-          // Merge: server items take priority, keep local edits
           var serverItems=d.items.map(function(si){
-            return{id:si._id||si.id,type:type,title:si.title||'',org:si.subtitle||'',desc:si.desc||'',imageData:si.image&&si.image.startsWith('data:')?si.image:'',imageUrl:si.image&&!si.image.startsWith('data:')?si.image:si.imageUrl||''};
+            return{id:si._id||si.id,type:type,title:si.title||'',org:si.subtitle||'',desc:si.desc||'',
+              imageData:si.image&&si.image.startsWith('data:')?si.image:'',
+              imageUrl:si.image&&!si.image.startsWith('data:')?si.image:(si.imageUrl||'')};
           });
-          // Save merged to localStorage
           var others=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){return a.type!==type;});
           safeSetItem('astroveda_custom_achievements',JSON.stringify(others.concat(serverItems)));
-          // Re-render just this section's table
-          renderSingleTable(type,containerId);
+          renderSingleTable(type,containerIds[section]);
         }
       })
       .catch(function(){});
   });
 
   // Check for broken items
-  var brokenCount = all.filter(function(a){ return a.imageData==='' && !a.imageUrl; }).length;
-  var warningEl = document.getElementById('achBrokenWarning');
-  if (warningEl) {
-    if (brokenCount > 0) {
-      warningEl.style.display = 'block';
-      warningEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>'+brokenCount+' item(s)</strong> have missing images (saved before compression fix). '
-        + 'Please <button onclick="clearAllAchievements()" style="background:rgba(255,107,107,.2);border:1px solid rgba(255,107,107,.4);color:#ff6b6b;border-radius:6px;padding:.15rem .5rem;cursor:pointer;font-size:.78rem;">Clear All</button> and re-add them — images will now save correctly.';
-    } else {
-      warningEl.style.display = 'none';
-    }
+  var all=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
+  var brokenCount=all.filter(function(a){return a.imageData===''&&!a.imageUrl;}).length;
+  var warningEl=document.getElementById('achBrokenWarning');
+  if(warningEl){
+    if(brokenCount>0){
+      warningEl.style.display='block';
+      warningEl.innerHTML='<i class="fas fa-exclamation-triangle"></i> <strong>'+brokenCount+' item(s)</strong> have missing images. '
+        +'<button onclick="clearAllAchievements()" style="background:rgba(255,107,107,.2);border:1px solid rgba(255,107,107,.4);color:#ff6b6b;border-radius:6px;padding:.15rem .5rem;cursor:pointer;font-size:.78rem;">Clear All</button> and re-add.';
+    } else { warningEl.style.display='none'; }
   }
-  function renderTable(type,containerId){ renderSingleTable(type,containerId); }
-  renderTable('award','awardsManager');renderTable('certificate','certificatesManager');renderTable('medal','medalsManager');renderTable('photo','photosManager');
 }
 
 function renderSingleTable(type,containerId){
   var all=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
   var items=all.filter(function(a){return a.type===type;});
   var el=document.getElementById(containerId);if(!el)return;
-    if(!items.length){el.innerHTML='<p style="color:var(--silver);font-size:.83rem;padding:.5rem 0;">No '+type+'s yet. Click + Add above.</p>';return;}
-    var ti={award:'🏆',certificate:'📜',medal:'🥇',photo:'📸'};
-    el.innerHTML='<table style="width:100%;border-collapse:collapse;"><thead><tr style="border-bottom:1px solid rgba(201,168,76,.2);">'
-      +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">#</th>'
-      +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Img</th>'
-      +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Title</th>'
-      +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Org</th>'
-      +'<th style="text-align:center;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Act</th>'
-      +'</tr></thead><tbody>'
-      +items.map(function(a,idx){
-        var ih=(a.imageData||a.imageUrl)?'<img src="'+(a.imageData||a.imageUrl)+'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;" onerror="this.style.display=\'none\'"/>':'<div style="width:40px;height:40px;background:rgba(201,168,76,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">'+(ti[type]||'✨')+'</div>';
-        return'<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
-          +'<td style="padding:.4rem;font-family:var(--font-ui);font-size:.75rem;color:var(--gold);font-weight:700;">'+(idx+1)+'</td>'
-          +'<td style="padding:.4rem;">'+ih+'</td>'
-          +'<td style="padding:.4rem;font-family:var(--font-ui);font-size:.8rem;color:var(--white);max-width:120px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'+(a.title||'-')+'</td>'
-          +'<td style="padding:.4rem;font-family:var(--font-ui);font-size:.72rem;color:var(--silver);max-width:90px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'+(a.org||'-')+'</td>'
-          +'<td style="padding:.4rem;"><div style="display:flex;gap:.3rem;justify-content:center;">'
-          +'<button class="ctrl-btn edit" onclick="editAchievement('+a.id+')" style="padding:.2rem .5rem;font-size:.68rem;"><i class="fas fa-edit"></i></button>'
-          +'<button class="ctrl-btn del" onclick="deleteAchievement('+a.id+')" style="padding:.2rem .5rem;font-size:.68rem;"><i class="fas fa-trash"></i></button>'
-          +'</div></td></tr>';
-      }).join('')+'</tbody></table>';
+  if(!items.length){el.innerHTML='<p style="color:var(--silver);font-size:.83rem;padding:.5rem 0;">No '+type+'s yet. Click + Add above.</p>';return;}
+  var ti={award:'🏆',certificate:'📜',medal:'🥇',photo:'📸'};
+  el.innerHTML='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:300px;"><thead><tr style="border-bottom:1px solid rgba(201,168,76,.2);">'
+    +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">#</th>'
+    +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Img</th>'
+    +'<th style="text-align:left;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Title</th>'
+    +'<th style="text-align:center;padding:.4rem;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Actions</th>'
+    +'</tr></thead><tbody>'
+    +items.map(function(a,idx){
+      var ih=(a.imageData||a.imageUrl)?'<img src="'+(a.imageData||a.imageUrl)+'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;" onerror="this.style.display=\'none\'"/>':'<div style="width:40px;height:40px;background:rgba(201,168,76,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">'+(ti[type]||'✨')+'</div>';
+      return'<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
+        +'<td style="padding:.4rem;font-family:var(--font-ui);font-size:.75rem;color:var(--gold);font-weight:700;">'+(idx+1)+'</td>'
+        +'<td style="padding:.4rem;">'+ih+'</td>'
+        +'<td style="padding:.4rem;font-family:var(--font-ui);font-size:.8rem;color:var(--white);max-width:140px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'+(a.title||'-')+'</td>'
+        +'<td style="padding:.4rem;"><div style="display:flex;gap:.3rem;justify-content:center;">'
+        +'<button class="ctrl-btn edit" onclick="editAchievement('+a.id+')" style="padding:.2rem .5rem;font-size:.68rem;"><i class="fas fa-edit"></i></button>'
+        +'<button class="ctrl-btn del" onclick="deleteAchievement('+a.id+')" style="padding:.2rem .5rem;font-size:.68rem;"><i class="fas fa-trash"></i></button>'
+        +'</div></td></tr>';
+    }).join('')+'</tbody></table></div>';
 }
 
 // ═══════════════════════════════════════════════════════════════
 // DANGER ZONE
 // ═══════════════════════════════════════════════════════════════
-function resetAllUsers(){if(!confirm('Clear all users from localStorage? MongoDB data unaffected.\nTo fully reset backend, run seed.js.'))return;localStorage.removeItem('astroveda_users');localStorage.removeItem('astroveda_bookings');localStorage.removeItem('astroveda_saved_products');renderOverview();renderUsersTable();renderBookingsTable();alert('Local users cleared.');}
-function resetFeedbacks(){if(!confirm('Clear all feedback messages?'))return;localStorage.removeItem('astroveda_feedbacks');localStorage.removeItem('astroveda_feedback');renderFeedbackList();renderOverview();alert('Feedbacks cleared.');}
-function resetReviews(){if(!confirm('Clear all reviews (Voices of Stars)?'))return;localStorage.removeItem('astroveda_testimonials');renderReviewsPanel();renderOverview();alert('Reviews cleared.');}
-function resetEvents(){if(!confirm('Remove all events from announcements?'))return;var posts=JSON.parse(localStorage.getItem('astroveda_posts')||'[]').filter(function(p){return p.type!=='event';});localStorage.setItem('astroveda_posts',JSON.stringify(posts));renderPostsTable();renderOverview();alert('Events removed.');}
+function resetAllUsers(){if(!confirm('Clear all users from localStorage? MongoDB data unaffected.'))return;localStorage.removeItem('astroveda_users');localStorage.removeItem('astroveda_bookings');localStorage.removeItem('astroveda_saved_products');renderOverview();renderUsersTable();renderBookingsTable();alert('Local cache cleared.');}
+function resetFeedbacks(){if(!confirm('Clear all feedback?'))return;localStorage.removeItem('astroveda_feedbacks');localStorage.removeItem('astroveda_feedback');renderFeedbackList();renderOverview();alert('Feedbacks cleared.');}
+function resetReviews(){if(!confirm('Clear all reviews?'))return;localStorage.removeItem('astroveda_testimonials');renderReviewsPanel();renderOverview();alert('Reviews cleared.');}
+function resetEvents(){if(!confirm('Remove all events?'))return;var posts=JSON.parse(localStorage.getItem('astroveda_posts')||'[]').filter(function(p){return p.type!=='event';});localStorage.setItem('astroveda_posts',JSON.stringify(posts));renderPostsTable();renderOverview();alert('Events removed.');}
 
 // ═══════════════════════════════════════════════════════════════
 // WEBSITE CONTROL
@@ -739,11 +781,8 @@ function loadSiteSettings(){
   var m=document.getElementById('maintenanceToggle');if(m)m.checked=!!s.maintenance;
   var b=document.getElementById('bookingsToggle');if(b)b.checked=s.acceptBookings!==false;
   var r=document.getElementById('reviewsToggle');if(r)r.checked=s.showReviews!==false;
-  // Update pricing button labels to show current saved price
-  var bj=document.getElementById('btnPriceJyotish');
-  if(bj)bj.textContent=s.priceJyotish?'₹'+s.priceJyotish:'Edit';
-  var bk=document.getElementById('btnPriceKundli');
-  if(bk)bk.textContent=s.priceKundli?'₹'+s.priceKundli:'Edit';
+  var bj=document.getElementById('btnPriceJyotish');if(bj)bj.textContent=s.priceJyotish?'₹'+s.priceJyotish:'Edit';
+  var bk=document.getElementById('btnPriceKundli');if(bk)bk.textContent=s.priceKundli?'₹'+s.priceKundli:'Edit';
 }
 function toggleSetting(key,val){var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');s[key]=val;localStorage.setItem('astroveda_site_settings',JSON.stringify(s));}
 function editSiteSetting(key,currentVal){document.getElementById('siteSettingTitle').textContent='Edit: '+key.replace(/([A-Z])/g,' $1').trim();document.getElementById('siteSettingKey').value=key;var stored=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');document.getElementById('siteSettingVal').value=stored[key]!==undefined?stored[key]:currentVal;openModal('siteSettingModal');}
@@ -753,32 +792,32 @@ function saveSiteSettingModal(){
   var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');
   s[key]=val;localStorage.setItem('astroveda_site_settings',JSON.stringify(s));
   closeModal('siteSettingModal');
-  // Refresh price button labels immediately after save
-  var bj=document.getElementById('btnPriceJyotish');
-  if(bj&&s.priceJyotish)bj.textContent='₹'+s.priceJyotish;
-  var bk=document.getElementById('btnPriceKundli');
-  if(bk&&s.priceKundli)bk.textContent='₹'+s.priceKundli;
+  var bj=document.getElementById('btnPriceJyotish');if(bj&&s.priceJyotish)bj.textContent='₹'+s.priceJyotish;
+  var bk=document.getElementById('btnPriceKundli');if(bk&&s.priceKundli)bk.textContent='₹'+s.priceKundli;
   alert('Saved! Refresh website to see changes.');
 }
 function editSiteImage(key){
   var input=document.createElement('input');input.type='file';input.accept='image/*';
-  input.onchange=function(){if(!this.files[0])return;var reader=new FileReader();reader.onload=function(e){var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');s[key]=e.target.result;localStorage.setItem('astroveda_site_settings',JSON.stringify(s));
+  input.onchange=function(){if(!this.files[0])return;var reader=new FileReader();reader.onload=function(e){
+    var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');s[key]=e.target.result;localStorage.setItem('astroveda_site_settings',JSON.stringify(s));
     if(key==='qrCode'){var thumb=document.getElementById('qrPreviewThumb');var img=document.getElementById('qrThumbImg');if(thumb&&img){img.src=e.target.result;thumb.style.display='block';}}
     alert('Image saved! Refresh website to see changes.');};reader.readAsDataURL(this.files[0]);};input.click();
 }
-function previewQR(){var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');if(!s.qrCode){alert('No QR code uploaded yet. Use the Upload button first.');return;}var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;';overlay.innerHTML='<img src="'+s.qrCode+'" style="max-width:90vw;max-height:80vh;object-fit:contain;border-radius:12px;box-shadow:0 0 40px rgba(201,168,76,.4);"/><p style="font-family:Rajdhani,sans-serif;color:rgba(255,255,255,.7);font-size:.9rem;">Payment QR Code — tap outside to close</p>';overlay.onclick=function(){document.body.removeChild(overlay);};document.body.appendChild(overlay);}
+function previewQR(){var s=JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}');if(!s.qrCode){alert('No QR code uploaded yet.');return;}var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;';overlay.innerHTML='<img src="'+s.qrCode+'" style="max-width:90vw;max-height:80vh;object-fit:contain;border-radius:12px;box-shadow:0 0 40px rgba(201,168,76,.4);"/><p style="font-family:Rajdhani,sans-serif;color:rgba(255,255,255,.7);font-size:.9rem;">Payment QR — tap outside to close</p>';overlay.onclick=function(){document.body.removeChild(overlay);};document.body.appendChild(overlay);}
 
 // ═══════════════════════════════════════════════════════════════
-// FEEDBACK — reads from BOTH storage keys
+// FEEDBACK
 // ═══════════════════════════════════════════════════════════════
 function renderFeedbackList(){
-  var f1=[],f2=[];try{f1=JSON.parse(localStorage.getItem('astroveda_feedbacks')||'[]');}catch(e){}try{f2=JSON.parse(localStorage.getItem('astroveda_feedback')||'[]');}catch(e){}
+  var f1=[],f2=[];
+  try{f1=JSON.parse(localStorage.getItem('astroveda_feedbacks')||'[]');}catch(e){}
+  try{f2=JSON.parse(localStorage.getItem('astroveda_feedback')||'[]');}catch(e){}
   var seen={},feedbacks=f1.concat(f2).filter(function(f){var k=f.id||f.time||f.msg;if(seen[k])return false;seen[k]=true;return true;});
   var list=document.getElementById('feedbackList');if(!list)return;
   list.innerHTML=feedbacks.length?[...feedbacks].reverse().map(function(f){
     return'<div class="feedback-dash-item"><div class="feedback-dash-header"><strong>'+(f.name||'User')+'</strong><span>'+(f.time?new Date(f.time).toLocaleDateString('en-IN'):'-')+'</span></div>'
       +'<p>'+(f.msg||f.message||f.text||'')+'</p></div>';
-  }).join(''):'<p style="color:var(--silver);">No feedback yet. Feedback submitted from the website will appear here.</p>';
+  }).join(''):'<p style="color:var(--silver);">No feedback yet.</p>';
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -805,10 +844,21 @@ function savePageContent(type){
 }
 function getFaqs(){try{return JSON.parse(localStorage.getItem('astroveda_faqs')||'null')||getDefaultFaqs();}catch(e){return getDefaultFaqs();}}
 function saveFaqs(f){localStorage.setItem('astroveda_faqs',JSON.stringify(f));}
-function getDefaultFaqs(){return[{id:1,q:'What is Vedic astrology?',a:'Vedic astrology (Jyotish) is the ancient Indian science of light — using planetary positions at birth to guide your life path, relationships, career, and spiritual journey.'},{id:2,q:"How accurate are Dr. Shastrijee's predictions?",a:'Over 90% accuracy for major life events, validated by thousands of clients across 25+ years of practice.'},{id:3,q:'How do I book a consultation?',a:'Click "Book Appointment", select your service, fill in your birth details, and submit. Dr. Shastrijee will confirm via WhatsApp.'},{id:4,q:'What information do I need?',a:'Exact date of birth, time of birth, and place of birth.'},{id:5,q:'Are consultations available outside India?',a:'Yes! Worldwide via video call, WhatsApp, and phone. Clients across 40+ countries.'},{id:6,q:'What is the difference between services?',a:'Free Consultation: 15-min intro. Jyotish Vishleshan: comprehensive 2-hour analysis. Kundli Nirman: birth chart with full interpretation.'}];}
+function getDefaultFaqs(){return[
+  {id:1,q:'What is Vedic astrology?',a:'Vedic astrology (Jyotish) is the ancient Indian science of light — using planetary positions at birth to guide your life path, relationships, career, and spiritual journey.'},
+  {id:2,q:"How accurate are Dr. Shastrijee's predictions?",a:'Over 90% accuracy for major life events, validated by thousands of clients across 25+ years of practice.'},
+  {id:3,q:'How do I book a consultation?',a:'Click "Book Appointment", select your service, fill in your birth details, and submit. Dr. Shastrijee will confirm via WhatsApp.'},
+  {id:4,q:'What information do I need?',a:'Exact date of birth, time of birth, and place of birth.'},
+  {id:5,q:'Are consultations available outside India?',a:'Yes! Worldwide via video call, WhatsApp, and phone. Clients across 40+ countries.'},
+  {id:6,q:'What is the difference between services?',a:'Free Consultation: 15-min intro. Jyotish Vishleshan: comprehensive 2-hour analysis. Kundli Nirman: birth chart with full interpretation.'}
+];}
 function renderFaqManager(){
   var faqs=getFaqs();var el=document.getElementById('faqManager');if(!el)return;
-  el.innerHTML=faqs.map(function(f){return'<div style="background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:10px;padding:.9rem;margin-bottom:.6rem;">'+'<div style="font-family:var(--font-ui);font-size:.88rem;color:var(--white);font-weight:600;margin-bottom:.3rem;">'+f.q+'</div>'+'<div style="font-size:.78rem;color:var(--silver);margin-bottom:.6rem;">'+(f.a||'').substring(0,80)+'...</div>'+'<div style="display:flex;gap:.4rem;"><button class="ctrl-btn edit" onclick="editFaq('+f.id+')" style="flex:1;"><i class="fas fa-edit"></i> Edit</button><button class="ctrl-btn del" onclick="deleteFaq('+f.id+')" style="flex:1;"><i class="fas fa-trash"></i> Delete</button></div></div>';}).join('')||'<p style="color:var(--silver);">No FAQs yet.</p>';
+  el.innerHTML=faqs.map(function(f){return'<div style="background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:10px;padding:.9rem;margin-bottom:.6rem;">'
+    +'<div style="font-family:var(--font-ui);font-size:.88rem;color:var(--white);font-weight:600;margin-bottom:.3rem;">'+f.q+'</div>'
+    +'<div style="font-size:.78rem;color:var(--silver);margin-bottom:.6rem;">'+(f.a||'').substring(0,80)+'...</div>'
+    +'<div style="display:flex;gap:.4rem;"><button class="ctrl-btn edit" onclick="editFaq('+f.id+')" style="flex:1;"><i class="fas fa-edit"></i> Edit</button><button class="ctrl-btn del" onclick="deleteFaq('+f.id+')" style="flex:1;"><i class="fas fa-trash"></i> Delete</button></div></div>';
+  }).join('')||'<p style="color:var(--silver);">No FAQs yet.</p>';
 }
 function openAddFaq(){document.getElementById('faqModalTitle').textContent='Add FAQ';document.getElementById('editFaqId').value='';document.getElementById('faqQuestion').value='';document.getElementById('faqAnswer').value='';openModal('addFaqModal');}
 function editFaq(id){var f=getFaqs().find(function(x){return x.id==id;});if(!f)return;document.getElementById('faqModalTitle').textContent='Edit FAQ';document.getElementById('editFaqId').value=id;document.getElementById('faqQuestion').value=f.q;document.getElementById('faqAnswer').value=f.a;openModal('addFaqModal');}
