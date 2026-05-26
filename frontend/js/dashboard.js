@@ -656,7 +656,31 @@ function clearAllAchievements(){if(!confirm('Delete ALL achievements?'))return;l
 
 function renderAchievementsPanel(){
   var all=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
-  // Check for broken items (imageData is empty string but was supposed to have image)
+
+  // Also load from MongoDB so mobile dashboard shows items added from laptop
+  ['awards','certificates','medals','photos'].forEach(function(section){
+    var typeMap={awards:'award',certificates:'certificate',medals:'medal',photos:'photo'};
+    var type=typeMap[section];
+    fetch(API+'/achievements/'+section)
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.success&&d.items&&d.items.length){
+          var containerId={awards:'awardsManager',certificates:'certificatesManager',medals:'medalsManager',photos:'photosManager'}[section];
+          // Merge: server items take priority, keep local edits
+          var serverItems=d.items.map(function(si){
+            return{id:si._id||si.id,type:type,title:si.title||'',org:si.subtitle||'',desc:si.desc||'',imageData:si.image&&si.image.startsWith('data:')?si.image:'',imageUrl:si.image&&!si.image.startsWith('data:')?si.image:si.imageUrl||''};
+          });
+          // Save merged to localStorage
+          var others=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){return a.type!==type;});
+          safeSetItem('astroveda_custom_achievements',JSON.stringify(others.concat(serverItems)));
+          // Re-render just this section's table
+          renderSingleTable(type,containerId);
+        }
+      })
+      .catch(function(){});
+  });
+
+  // Check for broken items
   var brokenCount = all.filter(function(a){ return a.imageData==='' && !a.imageUrl; }).length;
   var warningEl = document.getElementById('achBrokenWarning');
   if (warningEl) {
@@ -668,9 +692,14 @@ function renderAchievementsPanel(){
       warningEl.style.display = 'none';
     }
   }
-  function renderTable(type,containerId){
-    var items=all.filter(function(a){return a.type===type;});
-    var el=document.getElementById(containerId);if(!el)return;
+  function renderTable(type,containerId){ renderSingleTable(type,containerId); }
+  renderTable('award','awardsManager');renderTable('certificate','certificatesManager');renderTable('medal','medalsManager');renderTable('photo','photosManager');
+}
+
+function renderSingleTable(type,containerId){
+  var all=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
+  var items=all.filter(function(a){return a.type===type;});
+  var el=document.getElementById(containerId);if(!el)return;
     if(!items.length){el.innerHTML='<p style="color:var(--silver);font-size:.83rem;padding:.5rem 0;">No '+type+'s yet. Click + Add above.</p>';return;}
     var ti={award:'🏆',certificate:'📜',medal:'🥇',photo:'📸'};
     el.innerHTML='<table style="width:100%;border-collapse:collapse;"><thead><tr style="border-bottom:1px solid rgba(201,168,76,.2);">'
@@ -692,8 +721,6 @@ function renderAchievementsPanel(){
           +'<button class="ctrl-btn del" onclick="deleteAchievement('+a.id+')" style="padding:.2rem .5rem;font-size:.68rem;"><i class="fas fa-trash"></i></button>'
           +'</div></td></tr>';
       }).join('')+'</tbody></table>';
-  }
-  renderTable('award','awardsManager');renderTable('certificate','certificatesManager');renderTable('medal','medalsManager');renderTable('photo','photosManager');
 }
 
 // ═══════════════════════════════════════════════════════════════

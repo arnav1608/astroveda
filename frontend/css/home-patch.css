@@ -30,5 +30,19 @@
 .rashi-modal-footer { margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--glass-border); font-family:var(--font-ui); font-size:0.8rem; color:var(--silver); font-style:italic; }
 
 @media (max-width:1024px) { .zodiac-signs-grid{grid-template-columns:repeat(4,1fr);} .zodiac-wheel-container{width:380px;height:380px;} #zodiacWheel{width:380px;height:380px;} }
-@media (max-width:768px)  { .zodiac-signs-grid{grid-template-columns:repeat(3,1fr);} .zodiac-wheel-container{width:300px;height:300px;} #zodiacWheel{width:300px;height:300px;} .founder-contact-bar{flex-direction:column;} }
+@media (max-width:768px)  {
+  .zodiac-signs-grid{grid-template-columns:repeat(3,1fr);}
+  .zodiac-wheel-container{width:300px;height:300px;}
+  #zodiacWheel{width:300px;height:300px;}
+  .founder-contact-bar{flex-direction:column;}
+  /* Founder section mobile fix */
+  .founder-card { grid-template-columns:1fr !important; gap:2rem !important; padding:1.5rem !important; }
+  .founder-highlights { grid-template-columns:1fr !important; }
+  .founder-image-placeholder { width:200px !important; height:240px !important; }
+  .founder-name { font-size:1.4rem !important; }
+  .founder-desc { font-size:.95rem !important; }
+  /* Fix text overflow on mobile */
+  .founder-info { overflow-wrap:break-word; word-wrap:break-word; }
+  p, h2, h3, h4, span { max-width:100%; }
+}
 @media (max-width:480px)  { .zodiac-signs-grid{grid-template-columns:repeat(2,1fr);} }
