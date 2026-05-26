@@ -76,6 +76,22 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
+// @route  PATCH /api/appointments/by-booking-id/:bookingId/status  (mod only)
+exports.updateStatusByBookingId = async (req, res) => {
+  try {
+    const { status, notes } = req.body;
+    const apt = await Appointment.findOneAndUpdate(
+      { bookingId: req.params.bookingId },
+      { status, ...(notes && { notes }) },
+      { new: true }
+    );
+    if (!apt) return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    res.json({ success: true, appointment: apt });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // @route  DELETE /api/appointments/:id  (mod only)
 exports.deleteAppointment = async (req, res) => {
   try {
