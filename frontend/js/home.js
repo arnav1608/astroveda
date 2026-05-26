@@ -230,8 +230,11 @@ if (grid) {
 }
 
 // ── Rashi guidance ────────────────────────────────────────────────────────────
+// FIX 2: Dynamic month/year — always uses current system date, never hardcoded
+const CURRENT_MONTH = new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+
 const defaultRashi = {
-  month: new Date().toLocaleString('en-IN',{month:'long',year:'numeric'}),
+  month: CURRENT_MONTH,
   signs: {
     Mesh:      {career:'Shani\'s discipline brings job promotions and government exam success this month.',love:'Mangal ignites passion — but control temper in close relationships.',health:'Beware of headaches and fatigue. Rest well.',remedy:'Chant "Om Mangalaya Namah" daily. Wear red coral on Tuesday.'},
     Vrishabh:  {career:'Venus blesses finances — new income sources and business deals succeed.',love:'Romantic month. Spouse will be very supportive and loving.',health:'Throat and neck need care. Avoid cold drinks.',remedy:'Worship Goddess Lakshmi on Fridays. Wear white on Friday.'},
@@ -264,7 +267,7 @@ function openRashiModal(sign) {
       <div class="rashi-modal-icon">${r.animal}</div>
       <div>
         <div class="rashi-modal-name">${r.name} Rashi</div>
-        <div class="rashi-modal-hindi">${r.hindi} · ${rashiData.month || defaultRashi.month}</div>
+        <div class="rashi-modal-hindi">${r.hindi} · ${CURRENT_MONTH}</div>
       </div>
     </div>
     <div class="rashi-modal-content">

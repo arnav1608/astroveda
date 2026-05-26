@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms of Service – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+  <nav class="navbar" id="navbar"></nav>
+
+  <section class="page-hero">
+    <div class="page-hero-badge">✦ Legal ✦</div>
+    <h1>Terms of Service</h1>
+    <p>Please read these terms carefully before using AstroVeda services.</p>
+  </section>
+
+  <section style="position:relative;z-index:1;padding:4rem 2rem 6rem;">
+    <div style="max-width:860px;margin:0 auto;">
+
+      <!-- Last updated -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem;padding:1rem 1.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;">
+        <span style="font-family:var(--font-ui);font-size:.82rem;color:var(--silver);"><i class="fas fa-clock" style="color:var(--gold);margin-right:.4rem;"></i> Last Updated: <span id="termsLastUpdated">January 2025</span></span>
+        <a href="about.html" style="font-family:var(--font-ui);font-size:.78rem;color:var(--gold);display:flex;align-items:center;gap:.4rem;"><i class="fas fa-arrow-left"></i> Back to About</a>
+      </div>
+
+      <!-- Content -->
+      <div id="termsPageContent" style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.12);border-radius:20px;padding:2.5rem 3rem;line-height:1.9;color:var(--white-soft);font-size:1rem;white-space:pre-line;font-family:var(--font-ui);"></div>
+
+      <!-- Back button -->
+      <div style="margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="about.html" class="btn-secondary" style="display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.8rem;"><i class="fas fa-arrow-left"></i><span>Back to About</span></a>
+        <a href="privacy.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.8rem;"><span>Privacy Policy</span><i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">✦ AstroVeda</div>
+        <p>Ancient wisdom for the modern soul.</p>
+        <div class="footer-socials">
+          <a href="#" id="footerInstagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="#" id="footerFacebook" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://wa.me/918863038229" id="footerWhatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-links"><h4>Quick Links</h4><ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="appointment.html">Book Appointment</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul></div>
+      <div class="footer-contact"><h4>Contact</h4>
+        <p><i class="fas fa-phone"></i> +91 8863038229</p>
+        <p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var defaultTerms = `AstroVeda Terms of Service
+Last Updated: January 2025
+
+1. ACCEPTANCE OF TERMS
+By accessing and using AstroVeda services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+
+2. NATURE OF SERVICES
+Astrological guidance provided by Dr. Rajesh R Shastrijee is for informational and spiritual purposes only. It does not replace professional medical, legal, financial, or psychological advice. All decisions based on astrological guidance are solely the user's responsibility.
+
+3. CONSULTATIONS
+• Free Consultation: A 15-minute introductory session — no payment required
+• Paid Consultations: Full payment is required before session commencement
+• Sessions are conducted via video call, WhatsApp, or phone — online only
+• Available to clients worldwide in all time zones
+
+4. ACCURACY DISCLAIMER
+While Dr. Shastrijee applies decades of expertise and traditional Vedic knowledge, no astrological prediction can guarantee specific outcomes. Results vary based on individual circumstances, free will, and karmic factors beyond anyone's control.
+
+5. PAYMENT POLICY
+• All payments are non-refundable once a consultation has been conducted
+• For cancellations made before the session, refunds are considered on a case-by-case basis
+• Payment confirmation via WhatsApp screenshot is required before session begins
+• Accepted payment methods: UPI, bank transfer, and other methods as communicated
+
+6. BOOKING POLICY
+• Bookings are confirmed only after payment is received and verified
+• Dr. Shastrijee reserves the right to reschedule sessions due to unforeseen circumstances
+• Clients are expected to be punctual for their scheduled sessions
+
+7. PRODUCTS
+• All gemstones and Rudraksha are lab-certified and authentic
+• All Yantras are crafted from authentic metals and personally energized by Dr. Shastrijee
+• Product images are representative — slight natural variations may occur
+• Orders are confirmed via WhatsApp after payment verification
+• Products are non-refundable once energized and dispatched
+
+8. USER CONDUCT
+Users agree not to:
+• Misuse the platform for fraudulent purposes
+• Share false information in bookings or reviews
+• Reproduce or distribute any content from AstroVeda without permission
+
+9. INTELLECTUAL PROPERTY
+All content on AstroVeda — including texts, charts, guidance, remedies, and recommendations — is the intellectual property of Dr. Rajesh R Shastrijee. Reproduction without written permission is strictly prohibited.
+
+10. LIMITATION OF LIABILITY
+AstroVeda and Dr. Rajesh R Shastrijee are not liable for any decisions made, actions taken, or outcomes experienced based on astrological guidance provided.
+
+11. PRIVACY
+Please refer to our Privacy Policy for information on how your personal data is collected, used, and protected.
+
+12. GOVERNING LAW
+These terms are governed by the laws of India. Any disputes shall be subject to the jurisdiction of courts in India.
+
+13. CHANGES TO TERMS
+We reserve the right to modify these terms at any time. Continued use of our services after changes constitutes acceptance of the updated terms.
+
+14. CONTACT
+Dr. Rajesh R Shastrijee
+Phone: +91 8863038229
+Email: astrorrshastri@gmail.com
+WhatsApp: +91 8863038229`;
+
+      var pc = {};
+      try { pc = JSON.parse(localStorage.getItem('astroveda_page_content') || '{}'); } catch(e) {}
+      var content = pc.terms || defaultTerms;
+      document.getElementById('termsPageContent').textContent = content;
+    });
+  </script>
+</body>
+</html>

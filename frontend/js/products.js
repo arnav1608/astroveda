@@ -165,7 +165,7 @@ function renderProducts() {
   empty?.classList.add('hidden');
 
   grid.innerHTML = filtered.map(p => {
-    const img = getImg(p.id);
+    const img = getImg(p);  // FIX 5: use p object so imageData/imageUrl take priority
     const catEmoji = CAT_EMOJIS[p.category] || '✨';
     const catLabel = CAT_LABELS[p.category] || p.category;
     const imgHtml = img
@@ -204,7 +204,7 @@ window.openProductModal = function(id) {
   if (!content) return;
 
   const user = getUser();
-  const img  = getImg(p.id);
+  const img  = getImg(p);  // use imageData/imageUrl first
   const col  = PLANET_COLORS[p.planet] || '#c9a84c';
   const saved = isSaved(id);
 

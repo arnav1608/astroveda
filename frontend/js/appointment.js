@@ -200,6 +200,25 @@ function doConfirmBooking(isFree) {
 function openModal(id)  { document.getElementById(id)?.classList.add('open'); document.body.style.overflow='hidden'; }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); document.body.style.overflow=''; }
 
+// FIX 3: Enlarge QR code — fullscreen lightbox
+window.enlargeQR = function(el) {
+  // Find the img inside
+  var img = el.querySelector('img');
+  if (!img) {
+    // Try from site settings
+    var s = {};
+    try { s = JSON.parse(localStorage.getItem('astroveda_site_settings')||'{}'); } catch(e) {}
+    if (!s.qrCode) { showToast && showToast('No QR', 'QR code not uploaded yet.', '📷'); return; }
+    img = { src: s.qrCode };
+  }
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1rem;cursor:zoom-out;';
+  overlay.innerHTML = '<img src="'+img.src+'" style="max-width:min(90vw,500px);max-height:85vh;object-fit:contain;border-radius:16px;box-shadow:0 0 50px rgba(201,168,76,.4);"/>'
+    + '<p style="font-family:Rajdhani,sans-serif;color:rgba(255,255,255,.7);font-size:.9rem;text-align:center;">Payment QR — Tap to close</p>';
+  overlay.onclick = function(){ document.body.removeChild(overlay); };
+  document.body.appendChild(overlay);
+};
+
 document.querySelectorAll('.modal-overlay').forEach(o =>
   o.addEventListener('click', e => { if (e.target===o) closeModal(o.id); })
 );

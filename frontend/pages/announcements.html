@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../css/main.css"/>
   <link rel="stylesheet" href="../css/animations.css"/>
   <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
   <link rel="stylesheet" href="../css/announcements.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -46,12 +47,10 @@
           <h4 class="sidebar-title">✦ About the Page</h4>
           <p>Dr. Shastrijee shares cosmic insights, special offers, auspicious dates, and spiritual guidance here.</p>
         </div>
-        <div class="sidebar-card glass-card">
+        <div class="sidebar-card glass-card" id="sidebarEvents">
           <h4 class="sidebar-title">🌙 Upcoming Events</h4>
-          <div class="event-list">
-            <div class="event-item"><span class="event-dot"></span><div><strong>Solar Eclipse Webinar</strong><small>June 15, 2025</small></div></div>
-            <div class="event-item"><span class="event-dot"></span><div><strong>Navratri Special Reading</strong><small>Oct 3, 2025</small></div></div>
-            <div class="event-item"><span class="event-dot"></span><div><strong>Annual Muhurta Workshop</strong><small>Nov 20, 2025</small></div></div>
+          <div class="event-list" id="sidebarEventList">
+            <p style="font-family:var(--font-ui);font-size:.82rem;color:var(--silver);">No upcoming events. Check back soon!</p>
           </div>
         </div>
         <div class="sidebar-card glass-card">
@@ -89,9 +88,12 @@
     <div class="footer-content">
       <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
       <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li></ul></div>
-      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 8863038229</p></div>
     </div>
-    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
   </footer>
 
   <script src="../js/config.js"></script>

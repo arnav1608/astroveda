@@ -7,16 +7,49 @@
   <link rel="stylesheet" href="../css/main.css"/>
   <link rel="stylesheet" href="../css/animations.css"/>
   <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
   <link rel="stylesheet" href="../css/achievements.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* Lightbox */
+    #achLightbox{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:1.5rem;cursor:zoom-out;}
+    #achLightbox.open{display:flex;}
+    #lbImg{max-width:92vw;max-height:84vh;object-fit:contain;border-radius:14px;box-shadow:0 0 60px rgba(201,168,76,.35);cursor:default;}
+    #lbClose{position:fixed;top:1rem;right:1rem;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.5rem;cursor:pointer;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;z-index:100000;}
+    #lbCaption{font-family:var(--font-ui);font-size:.9rem;color:rgba(255,255,255,.75);text-align:center;max-width:620px;}
+    /* Clickable card */
+    .ach-card{cursor:zoom-in;transition:transform .3s,box-shadow .3s;}
+    .ach-card:hover{transform:translateY(-6px) scale(1.015);box-shadow:0 0 28px rgba(201,168,76,.25);}
+    /* Award image — full width above text */
+    .award-img{width:100%;height:190px;object-fit:cover;border-radius:14px;margin-bottom:1rem;display:block;}
+    .award-no-img{width:70px;height:70px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;font-size:2.4rem;}
+    /* Certificate image */
+    .cert-img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-top:.8rem;display:block;}
+    /* Medal image */
+    .medal-img{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:.8rem;display:block;}
+    /* Photo card — override aspect-ratio so image shows */
+    .photo-card{border-radius:14px;overflow:hidden;background:rgba(8,8,30,.85);border:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;aspect-ratio:unset!important;}
+    .photo-card-img{width:100%;height:210px;object-fit:cover;display:block;flex-shrink:0;}
+    .photo-placeholder{height:210px;background:rgba(201,168,76,.04);display:flex;align-items:center;justify-content:center;font-size:3.5rem;flex-shrink:0;}
+    .photo-card-body{padding:.8rem 1rem;}
+    .photo-card-title{font-family:var(--font-display);font-size:.9rem;color:var(--white);}
+    .photo-card-org{font-family:var(--font-ui);font-size:.75rem;color:var(--gold);margin-top:.15rem;}
+    .photo-card-desc{font-family:var(--font-ui);font-size:.72rem;color:var(--silver);margin-top:.2rem;line-height:1.5;}
+  </style>
 </head>
 <body>
   <div class="cursor-glow" id="cursor"></div>
   <div class="cursor-trail" id="cursorTrail"></div>
   <canvas id="cosmicCanvas"></canvas>
-
   <nav class="navbar" id="navbar"></nav>
+
+  <!-- Lightbox -->
+  <div id="achLightbox" onclick="if(event.target.id==='achLightbox')closeLightbox()">
+    <button id="lbClose" onclick="closeLightbox()">✕</button>
+    <img id="lbImg" src="" alt="Achievement"/>
+    <div id="lbCaption"></div>
+  </div>
 
   <section class="page-hero">
     <div class="page-hero-badge">✦ Hall of Honour ✦</div>
@@ -24,7 +57,6 @@
     <p>A lifetime of dedication to the sacred science of Jyotish — recognised by institutions across India and the world.</p>
   </section>
 
-  <!-- Achievement Sub-Nav -->
   <div class="ach-subnav container">
     <button class="ach-tab active" onclick="switchAchTab('awards',this)"><i class="fas fa-trophy"></i> Awards</button>
     <button class="ach-tab" onclick="switchAchTab('certificates',this)"><i class="fas fa-certificate"></i> Certificates</button>
@@ -32,177 +64,45 @@
     <button class="ach-tab" onclick="switchAchTab('photos',this)"><i class="fas fa-images"></i> Photos</button>
   </div>
 
-  <!-- AWARDS -->
   <section class="ach-panel active container" id="ach-awards">
     <div class="section-header reveal">
       <div class="section-badge">🏆 Awards & Honours</div>
       <h2 class="section-title">Recognised by the <em>World</em></h2>
     </div>
     <div class="awards-grid" id="awardsGrid">
-
-      <div class="award-card gold-card reveal">
-        <div class="award-ribbon">⭐ Flagship Award</div>
-        <div class="award-icon-wrap"><div class="award-icon">🌐</div></div>
-        <h3 class="award-title">IAF Brand Ambassador</h3>
-        <p class="award-org">International Astrology Federation</p>
-        <p class="award-desc">Appointed as Brand Ambassador by the International Astrology Federation — one of the world's most prestigious astrological bodies — in recognition of Dr. Shastrijee's global contribution to Vedic astrology.</p>
-        <div class="award-year-badge">IAF · International</div>
+      <div id="awardsEmpty" style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--silver);">
+        <div style="font-size:4rem;margin-bottom:1rem;">🏆</div>
+        <p style="font-family:var(--font-ui);font-size:1rem;">Awards will appear here once added from the Dashboard.</p>
       </div>
-
-      <div class="award-card silver-card reveal">
-        <div class="award-icon-wrap"><div class="award-icon">🇺🇸</div></div>
-        <h3 class="award-title">USA Astrological Fellowship Award</h3>
-        <p class="award-org">USA Astrological Fellowship</p>
-        <p class="award-desc">Awarded by the USA Astrological Fellowship for outstanding research and contribution to Vedic astrology on an international platform. One of the few Indian astrologers to receive this honour.</p>
-        <div class="award-year-badge">USA · International</div>
-      </div>
-
-      <div class="award-card gold-card reveal">
-        <div class="award-icon-wrap"><div class="award-icon">🏺</div></div>
-        <h3 class="award-title">Maharsi Gyan Ratna Award</h3>
-        <p class="award-org">National Vedic Astrological Council</p>
-        <p class="award-desc">The prestigious Maharsi Gyan Ratna Award — bestowed upon Dr. Rajesh R Shastrijee for his extraordinary knowledge, research, and service in preserving and spreading the wisdom of Vedic astrology.</p>
-        <div class="award-year-badge">National · India</div>
-      </div>
-
-      <div class="award-card bronze-card reveal">
-        <div class="award-icon-wrap"><div class="award-icon">🌟</div></div>
-        <h3 class="award-title">Jyotish Ratna Award</h3>
-        <p class="award-org">All India Astrology Federation</p>
-        <p class="award-desc">Conferred with the Jyotish Ratna (Jewel of Astrology) honour by the All India Astrology Federation for decades of accurate predictions and outstanding client service.</p>
-        <div class="award-year-badge">National · India</div>
-      </div>
-
-      <div class="award-card bronze-card reveal">
-        <div class="award-icon-wrap"><div class="award-icon">🥇</div></div>
-        <h3 class="award-title">Best Astrologer of the Year</h3>
-        <p class="award-org">Vedic Wisdom Awards</p>
-        <p class="award-desc">Recognised as the Best Vedic Astrologer of the Year by the Vedic Wisdom Awards committee for exceptional accuracy, ethical practice, and public service through astrology.</p>
-        <div class="award-year-badge">Annual · National</div>
-      </div>
-
-      <div class="award-card silver-card reveal">
-        <div class="award-icon-wrap"><div class="award-icon">📺</div></div>
-        <h3 class="award-title">National Media Recognition</h3>
-        <p class="award-org">National Television & Radio</p>
-        <p class="award-desc">Featured as an expert astrologer on multiple national TV channels, radio programs, and print media across India for insightful Vedic commentary and public guidance.</p>
-        <div class="award-year-badge">Media · National</div>
-      </div>
-
     </div>
   </section>
 
-  <!-- CERTIFICATES -->
   <section class="ach-panel container" id="ach-certificates">
     <div class="section-header reveal">
       <div class="section-badge">📜 Certifications</div>
       <h2 class="section-title">Academic & Professional <em>Qualifications</em></h2>
     </div>
     <div class="cert-grid" id="certsGrid">
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">🎓</div>
-        <div class="cert-body">
-          <h4>PhD in Vedic Astrology</h4>
-          <p class="cert-inst">University of Vedic Sciences</p>
-          <p class="cert-desc">Doctoral research on Nadi astrology and predictive techniques in Parashari Jyotish.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
+      <div id="certsEmpty" style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--silver);">
+        <div style="font-size:4rem;margin-bottom:1rem;">📜</div>
+        <p style="font-family:var(--font-ui);font-size:1rem;">Certificates will appear here once added from the Dashboard.</p>
       </div>
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">📜</div>
-        <div class="cert-body">
-          <h4>Jyotish Acharya</h4>
-          <p class="cert-inst">Vedic Astrology Board of India</p>
-          <p class="cert-desc">Highest academic credential in Vedic Jyotish, covering all Shadbala, Ashtakavarga, and predictive techniques.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
-      </div>
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">🕉️</div>
-        <div class="cert-body">
-          <h4>Sanskrit Scholar (Shastri)</h4>
-          <p class="cert-inst">Sanskrit University</p>
-          <p class="cert-desc">Mastery of classical Sanskrit enabling direct reading of ancient astrological texts and Vedic scriptures.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
-      </div>
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">🌏</div>
-        <div class="cert-body">
-          <h4>IAF Membership Certificate</h4>
-          <p class="cert-inst">International Astrology Federation</p>
-          <p class="cert-desc">Certified member and Brand Ambassador of the International Astrology Federation.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
-      </div>
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">🔯</div>
-        <div class="cert-body">
-          <h4>KP Astrology Certification</h4>
-          <p class="cert-inst">KP Astrology Association of India</p>
-          <p class="cert-desc">Certified in Krishnamurti Paddhati (KP) — a highly precise predictive system for event timing.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
-      </div>
-
-      <div class="cert-card glass-card reveal">
-        <div class="cert-icon">💎</div>
-        <div class="cert-body">
-          <h4>Gemology Certification</h4>
-          <p class="cert-inst">Gemological Institute</p>
-          <p class="cert-desc">Certified gemologist — qualified to identify, authenticate, and recommend natural gemstones for planetary remedies.</p>
-        </div>
-        <div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Certificate Image — Coming Soon</span></div>
-      </div>
-
     </div>
   </section>
 
-  <!-- MEDALS -->
   <section class="ach-panel container" id="ach-medals">
     <div class="section-header reveal">
       <div class="section-badge">🏅 Medals & Honours</div>
       <h2 class="section-title">Medals of <em>Excellence</em></h2>
     </div>
     <div class="medals-grid" id="medalsGrid">
-
-      <div class="medal-card reveal">
-        <div class="medal-display gold-medal">🥇</div>
-        <h4>Gold Medal – Vedic Excellence</h4>
-        <p>Awarded for the highest accuracy rate in public predictions over a decade of documented consultations.</p>
-        <div class="medal-placeholder"><i class="fas fa-image"></i><span>Medal Photo Coming Soon</span></div>
+      <div id="medalsEmpty" style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--silver);">
+        <div style="font-size:4rem;margin-bottom:1rem;">🥇</div>
+        <p style="font-family:var(--font-ui);font-size:1rem;">Medals will appear here once added from the Dashboard.</p>
       </div>
-
-      <div class="medal-card reveal">
-        <div class="medal-display silver-medal">🥈</div>
-        <h4>Silver Medal – International Jyotish</h4>
-        <p>International Jyotish Sammelan Silver Medal for research paper on "Nadi Astrology and Karma Theory."</p>
-        <div class="medal-placeholder"><i class="fas fa-image"></i><span>Medal Photo Coming Soon</span></div>
-      </div>
-
-      <div class="medal-card reveal">
-        <div class="medal-display bronze-medal">🏅</div>
-        <h4>Honour Shield – Spiritual Leadership</h4>
-        <p>Presented by the National Spiritual Leaders Convention for decades of public service through astrological guidance.</p>
-        <div class="medal-placeholder"><i class="fas fa-image"></i><span>Medal Photo Coming Soon</span></div>
-      </div>
-
-      <div class="medal-card reveal">
-        <div class="medal-display gold-medal">⭐</div>
-        <h4>Star of Jyotish – IAF</h4>
-        <p>Rare honour given to Brand Ambassadors of the International Astrology Federation for global contributions.</p>
-        <div class="medal-placeholder"><i class="fas fa-image"></i><span>Medal Photo Coming Soon</span></div>
-      </div>
-
     </div>
   </section>
 
-  <!-- PHOTOS -->
   <section class="ach-panel container" id="ach-photos">
     <div class="section-header reveal">
       <div class="section-badge">📸 Gallery</div>
@@ -210,27 +110,40 @@
       <p class="section-sub">A visual journey through Dr. Shastrijee's career, events, and milestones.</p>
     </div>
     <div class="photos-grid" id="photosGrid">
-      <!-- Placeholder gallery items -->
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>Award Ceremony</span></div></div>
-      <div class="photo-item photo-wide reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>IAF Event — International</span></div></div>
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>USA Fellowship Award</span></div></div>
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>Consultation Session</span></div></div>
-      <div class="photo-item photo-wide reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>National Astrology Conference</span></div></div>
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>Media Appearance</span></div></div>
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>Maharsi Gyan Ratna Ceremony</span></div></div>
-      <div class="photo-item reveal"><div class="photo-placeholder"><i class="fas fa-camera"></i><span>Workshop Seminar</span></div></div>
+      <div id="photosEmpty" style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--silver);">
+        <div style="font-size:4rem;margin-bottom:1rem;">📸</div>
+        <p style="font-family:var(--font-ui);font-size:1rem;">Photos will appear here once added from the Dashboard.</p>
+      </div>
     </div>
-    <p class="photos-note">📌 Actual photos will be added by the moderator from the Dashboard.</p>
   </section>
 
   <footer class="footer">
     <div class="footer-stars" id="footerStars"></div>
     <div class="footer-content">
-      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p><div class="footer-socials"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-youtube"></i></a><a href="https://wa.me/918863038229"><i class="fab fa-whatsapp"></i></a></div></div>
-      <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li><li><a href="about.html">About</a></li></ul></div>
-      <div class="footer-contact"><h4>Contact</h4><p><i class="fas fa-phone"></i> +91 8863038229</p><p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p></div>
+      <div class="footer-brand">
+        <div class="footer-logo">✦ AstroVeda</div>
+        <p>Ancient wisdom for the modern soul.</p>
+        <div class="footer-socials">
+          <a href="#" id="footerInstagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="#" id="footerFacebook" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://wa.me/918863038229" id="footerWhatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-links"><h4>Quick Links</h4><ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="appointment.html">Book Appointment</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul></div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-phone"></i> +91 8863038229</p>
+        <p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p>
+      </div>
     </div>
-    <div class="footer-bottom"><p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p></div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
   </footer>
 
   <script src="../js/config.js"></script>
@@ -239,95 +152,162 @@
   <script src="../js/cosmic.js"></script>
   <script src="../js/main.js"></script>
   <script>
-    function switchAchTab(name, btn) {
-      document.querySelectorAll('.ach-panel').forEach(p=>p.classList.remove('active'));
-      document.querySelectorAll('.ach-tab').forEach(b=>b.classList.remove('active'));
-      document.getElementById('ach-'+name)?.classList.add('active');
-      btn.classList.add('active');
+  'use strict';
+
+  // ─── Image cache: store base64 in JS array, use index in HTML attributes ─────
+  var _imgCache = [];
+  function cacheImg(src) {
+    if (!src || src.length < 15) return '';
+    _imgCache.push(src);
+    return String(_imgCache.length - 1); // index as string
+  }
+  function recallImg(idx) {
+    if (idx === '') return '';
+    var i = parseInt(idx);
+    return (isNaN(i) ? '' : (_imgCache[i] || ''));
+  }
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+
+  // ─── Get best available image from any item ───────────────────────────────────
+  function bestSrc(a) {
+    var checks = [a.imageData, a.images && a.images[0], a.imageUrl, a.image];
+    for (var i = 0; i < checks.length; i++) {
+      var v = checks[i];
+      if (v && typeof v === 'string' && v.length > 15) return v;
     }
+    return '';
+  }
 
-    // Load moderator-added achievements from dashboard
-    window.addEventListener('DOMContentLoaded', function() {
-      // Small delay to ensure localStorage is fully readable
-      setTimeout(function() {
-        var all = [];
-        try { all = JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]'); } catch(e){}
+  // ─── Lightbox ─────────────────────────────────────────────────────────────────
+  function openLightbox(idx, caption) {
+    var src = recallImg(idx);
+    if (!src) return;
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lbCaption').textContent = caption || '';
+    document.getElementById('achLightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('achLightbox').classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(function(){ document.getElementById('lbImg').src=''; }, 300);
+  }
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
 
-        function renderCustom(type, gridId, cardClass) {
-          var items = all.filter(function(a){ return a.type === type; });
-          if (!items.length) return;
-          var grid = document.getElementById(gridId);
-          if (!grid) return;
-          var html = items.map(function(a) {
-            var imgHtml = (a.imageData||a.imageUrl)
-              ? '<img src="'+(a.imageData||a.imageUrl)+'" style="width:100%;height:160px;object-fit:cover;border-radius:12px;margin-bottom:1rem;" onerror="this.style.display=\'none\'"/>'
-              : '<div class="award-icon-wrap"><div class="award-icon">🏅</div></div>';
-            return '<div class="award-card '+(cardClass||'silver-card')+' reveal">'
-              + imgHtml
-              + '<h3 class="award-title">' + (a.title||'') + '</h3>'
-              + (a.org ? '<p class="award-org">' + a.org + '</p>' : '')
-              + (a.desc ? '<p class="award-desc">' + a.desc + '</p>' : '')
-              + '</div>';
-          }).join('');
-          grid.insertAdjacentHTML('beforeend', html);
-        }
+  // Delegated click — every .ach-card carries data-idx and data-cap
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.ach-card');
+    if (!card) return;
+    var idx = card.getAttribute('data-idx');
+    var cap = card.getAttribute('data-cap') || '';
+    if (idx !== null && idx !== '') openLightbox(idx, cap);
+  });
 
-        function renderCustomCerts(gridId) {
-          var items = all.filter(function(a){ return a.type === 'certificate'; });
-          if (!items.length) return;
-          var grid = document.getElementById(gridId);
-          if (!grid) return;
-          var html = items.map(function(a) {
-            return '<div class="cert-card glass-card reveal">'
-              + '<div class="cert-icon">📜</div>'
-              + '<div class="cert-body"><h4>' + (a.title||'') + '</h4>'
-              + '<p class="cert-inst">' + (a.org||'') + '</p>'
-              + '<p class="cert-desc">' + (a.desc||'') + '</p></div>'
-              + ((a.imageData||a.imageUrl) ? '<img src="'+(a.imageData||a.imageUrl)+'" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-top:.8rem;"/>'
-                : '<div class="cert-placeholder"><i class="fas fa-file-certificate"></i><span>Image uploaded via dashboard</span></div>')
-              + '</div>';
-          }).join('');
-          grid.insertAdjacentHTML('beforeend', html);
-        }
+  // ─── Tab switch ────────────────────────────────────────────────────────────────
+  function switchAchTab(name, btn) {
+    document.querySelectorAll('.ach-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.ach-tab').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('ach-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
 
-        function renderCustomMedals(gridId) {
-          var items = all.filter(function(a){ return a.type === 'medal'; });
-          if (!items.length) return;
-          var grid = document.getElementById(gridId);
-          if (!grid) return;
-          var html = items.map(function(a) {
-            return '<div class="medal-card reveal">'
-              + '<div class="medal-display gold-medal">🏅</div>'
-              + '<h4>' + (a.title||'') + '</h4>'
-              + '<p>' + (a.desc||'') + '</p>'
-              + ((a.imageData||a.imageUrl) ? '<img src="'+(a.imageData||a.imageUrl)+'" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:.8rem;"/>'
-                : '<div class="medal-placeholder"><i class="fas fa-image"></i><span>'+( a.org||'Dashboard uploaded')+'</span></div>')
-              + '</div>';
-          }).join('');
-          grid.insertAdjacentHTML('beforeend', html);
-        }
+  // ─── Render: Award ─────────────────────────────────────────────────────────────
+  function renderAward(a) {
+    var src = bestSrc(a);
+    var idx = cacheImg(src);
+    var hasImg = src.length > 15;
+    return '<div class="award-card silver-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
+      + (hasImg
+          ? '<img class="award-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>'
+          : '<div class="award-no-img">🏆</div>')
+      + '<h3 class="award-title">'+(a.title||'Untitled')+'</h3>'
+      + (a.org||a.subtitle ? '<p class="award-org">'+(a.org||a.subtitle)+'</p>' : '')
+      + (a.desc ? '<p class="award-desc">'+a.desc+'</p>' : '')
+      + '</div>';
+  }
 
-        renderCustom('award', 'awardsGrid', 'silver-card');
-        renderCustomCerts('certsGrid');
-        renderCustomMedals('medalsGrid');
+  // ─── Render: Certificate ────────────────────────────────────────────────────────
+  function renderCert(a) {
+    var src = bestSrc(a);
+    var idx = cacheImg(src);
+    var hasImg = src.length > 15;
+    return '<div class="cert-card glass-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
+      + '<div style="display:flex;gap:.8rem;align-items:flex-start;">'
+      +   '<span style="font-size:2.2rem;flex-shrink:0;">📜</span>'
+      +   '<div class="cert-body">'
+      +     '<h4>'+(a.title||'Untitled')+'</h4>'
+      +     '<p class="cert-inst">'+(a.org||a.subtitle||'')+'</p>'
+      +     (a.desc ? '<p class="cert-desc">'+a.desc+'</p>' : '')
+      +   '</div>'
+      + '</div>'
+      + (hasImg ? '<img class="cert-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>' : '')
+      + '</div>';
+  }
 
-        // Photos
-        var photos = all.filter(function(a){ return a.type === 'photo'; });
-        if (photos.length) {
-          var pg = document.getElementById('photosGrid');
-          if (pg) {
-            photos.forEach(function(p) {
-              var div = document.createElement('div');
-              div.className = 'photo-item reveal';
-              div.innerHTML = (p.imageData||p.imageUrl)
-                ? '<img src="'+(p.imageData||p.imageUrl)+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" alt="'+(p.title||'Photo')+'"/>'
-                : '<div class="photo-placeholder"><i class="fas fa-camera"></i><span>'+(p.title||'Photo')+'</span></div>';
-              pg.insertAdjacentElement('afterbegin', div);
-            });
-          }
-        }
-      }, 100);
-    });
+  // ─── Render: Medal ──────────────────────────────────────────────────────────────
+  function renderMedal(a) {
+    var src = bestSrc(a);
+    var idx = cacheImg(src);
+    var hasImg = src.length > 15;
+    return '<div class="medal-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
+      + '<div class="medal-display gold-medal">🥇</div>'
+      + '<h4>'+(a.title||'Untitled')+'</h4>'
+      + (a.desc ? '<p>'+a.desc+'</p>' : '')
+      + (hasImg ? '<img class="medal-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>' : '')
+      + (a.org||a.subtitle ? '<p style="font-family:var(--font-ui);font-size:.75rem;color:var(--gold);margin-top:.4rem;">'+(a.org||a.subtitle)+'</p>' : '')
+      + '</div>';
+  }
+
+  // ─── Render: Photo ──────────────────────────────────────────────────────────────
+  function renderPhoto(p) {
+    var src = bestSrc(p);
+    var idx = cacheImg(src);
+    var hasImg = src.length > 15;
+    return '<div class="photo-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(p.title||'')+'">'
+      + (hasImg
+          ? '<img class="photo-card-img" src="'+src+'" alt="'+esc(p.title||'')+'" onerror="this.style.display=\'none\'"/>'
+          : '<div class="photo-placeholder">📸</div>')
+      + '<div class="photo-card-body">'
+      + (p.title  ? '<div class="photo-card-title">'+p.title+'</div>' : '')
+      + (p.org||p.subtitle ? '<div class="photo-card-org">'+(p.org||p.subtitle)+'</div>' : '')
+      + (p.desc   ? '<div class="photo-card-desc">'+p.desc+'</div>' : '')
+      + '</div></div>';
+  }
+
+  // ─── Load from localStorage and render ────────────────────────────────────────
+  function localItems(type) {
+    try {
+      return JSON.parse(localStorage.getItem('astroveda_custom_achievements') || '[]')
+             .filter(function(a){ return a.type === type; });
+    } catch(e) { return []; }
+  }
+
+  function renderGrid(gridId, emptyId, items, fn) {
+    var grid  = document.getElementById(gridId);
+    var empty = document.getElementById(emptyId);
+    if (!grid) return;
+    if (items.length > 0) {
+      if (empty) empty.style.display = 'none';
+      grid.innerHTML = items.map(fn).join('');
+    } else {
+      if (empty) empty.style.display = '';
+      // Remove any stale rendered cards (keep only the empty placeholder)
+      Array.from(grid.children).forEach(function(child){
+        if (child.id !== emptyId) child.remove();
+      });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    _imgCache = []; // fresh cache on every page load
+
+    renderGrid('awardsGrid', 'awardsEmpty', localItems('award'),       renderAward);
+    renderGrid('certsGrid',  'certsEmpty',  localItems('certificate'), renderCert);
+    renderGrid('medalsGrid', 'medalsEmpty', localItems('medal'),       renderMedal);
+    renderGrid('photosGrid', 'photosEmpty', localItems('photo'),       renderPhoto);
+  });
   </script>
 </body>
 </html>

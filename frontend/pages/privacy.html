@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy – AstroVeda</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="stylesheet" href="../css/animations.css"/>
+  <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="cursor-glow" id="cursor"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <canvas id="cosmicCanvas"></canvas>
+  <nav class="navbar" id="navbar"></nav>
+
+  <section class="page-hero">
+    <div class="page-hero-badge">✦ Legal ✦</div>
+    <h1>Privacy Policy</h1>
+    <p>How AstroVeda collects, uses, and protects your personal information.</p>
+  </section>
+
+  <section style="position:relative;z-index:1;padding:4rem 2rem 6rem;">
+    <div style="max-width:860px;margin:0 auto;">
+
+      <!-- Last updated + dashboard edit notice -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem;padding:1rem 1.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;">
+        <span style="font-family:var(--font-ui);font-size:.82rem;color:var(--silver);"><i class="fas fa-clock" style="color:var(--gold);margin-right:.4rem;"></i> Last Updated: <span id="privacyLastUpdated">January 2025</span></span>
+        <a href="about.html" style="font-family:var(--font-ui);font-size:.78rem;color:var(--gold);display:flex;align-items:center;gap:.4rem;"><i class="fas fa-arrow-left"></i> Back to About</a>
+      </div>
+
+      <!-- Content — loaded from dashboard or default -->
+      <div id="privacyPageContent" style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.12);border-radius:20px;padding:2.5rem 3rem;line-height:1.9;color:var(--white-soft);font-size:1rem;white-space:pre-line;font-family:var(--font-ui);"></div>
+
+      <!-- Back button -->
+      <div style="margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="about.html" class="btn-secondary" style="display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.8rem;"><i class="fas fa-arrow-left"></i><span>Back to About</span></a>
+        <a href="terms.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.8rem;"><span>Terms of Service</span><i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-stars" id="footerStars"></div>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">✦ AstroVeda</div>
+        <p>Ancient wisdom for the modern soul.</p>
+        <div class="footer-socials">
+          <a href="#" id="footerInstagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="#" id="footerFacebook" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://wa.me/918863038229" id="footerWhatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-links"><h4>Quick Links</h4><ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="appointment.html">Book Appointment</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul></div>
+      <div class="footer-contact"><h4>Contact</h4>
+        <p><i class="fas fa-phone"></i> +91 8863038229</p>
+        <p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/site-settings.js"></script>
+  <script src="../js/cosmic.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var defaultPrivacy = `AstroVeda Privacy Policy
+Last Updated: January 2025
+
+1. INFORMATION WE COLLECT
+We collect information you provide during consultations and sign-up:
+• Name, mobile number, email address
+• Date of birth, time of birth, place of birth (required for astrological charts)
+• Messages and feedback you send us
+
+2. HOW WE USE YOUR INFORMATION
+Your information is used exclusively for:
+• Preparing personalized astrological charts and readings
+• Communicating consultation details via WhatsApp or email
+• Improving our services and user experience
+• Sending relevant updates (only with your consent)
+
+3. DATA CONFIDENTIALITY
+All personal information shared during consultations is kept strictly confidential. We never sell, trade, or share your data with third parties without your explicit written consent.
+
+4. DATA SECURITY
+We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+
+5. BIRTH DATA SENSITIVITY
+We understand that birth details are sensitive personal information. They are used solely for preparing astrological charts and are never shared externally.
+
+6. COOKIES
+Our website uses minimal essential cookies only for basic functionality. No tracking, advertising, or third-party analytics cookies are used.
+
+7. YOUR RIGHTS
+You have the right to:
+• Access your personal data we hold
+• Request correction of inaccurate data
+• Request deletion of your personal data
+• Withdraw consent at any time
+
+To exercise these rights, contact us at astrorrshastri@gmail.com.
+
+8. THIRD-PARTY LINKS
+Our website may contain links to external sites. We are not responsible for their privacy practices.
+
+9. CHANGES TO THIS POLICY
+We may update this policy occasionally. The updated date will always be shown at the top of this page.
+
+10. CONTACT
+Dr. Rajesh R Shastrijee
+Phone: +91 8863038229
+Email: astrorrshastri@gmail.com
+WhatsApp: +91 8863038229`;
+
+      // Load from dashboard if saved
+      var pc = {};
+      try { pc = JSON.parse(localStorage.getItem('astroveda_page_content') || '{}'); } catch(e) {}
+      var content = pc.privacy || defaultPrivacy;
+      document.getElementById('privacyPageContent').textContent = content;
+    });
+  </script>
+</body>
+</html>

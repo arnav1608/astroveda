@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../css/main.css"/>
   <link rel="stylesheet" href="../css/animations.css"/>
   <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
   <link rel="stylesheet" href="../css/profile.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -62,7 +63,6 @@
         <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
         <button class="tab-btn" onclick="switchTab('appointments', this)">Appointments</button>
         <button class="tab-btn" onclick="switchTab('saved', this)">Saved</button>
-        <button class="tab-btn" onclick="switchTab('activity', this)">Activity</button>
       </div>
     </div>
 
@@ -88,8 +88,8 @@
             <div class="profile-stats-grid">
               <div class="pstat"><div class="pstat-num" id="statBookings">0</div><div class="pstat-label">Bookings</div></div>
               <div class="pstat"><div class="pstat-num" id="statSaved">0</div><div class="pstat-label">Saved</div></div>
-              <div class="pstat"><div class="pstat-num">5</div><div class="pstat-label">Posts Liked</div></div>
-              <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Comments</div></div>
+              <div class="pstat"><div class="pstat-num" id="statLiked">0</div><div class="pstat-label">Posts Liked</div></div>
+              <div class="pstat"><div class="pstat-num" id="statComments">0</div><div class="pstat-label">Comments</div></div>
             </div>
           </div>
         </div>
@@ -105,12 +105,6 @@
       <div class="tab-panel" id="tab-saved">
         <h3 class="tab-section-title">Saved Products</h3>
         <div id="savedProductsList" style="display:flex;flex-direction:column;gap:.8rem;"></div>
-      </div>
-
-      <!-- Activity -->
-      <div class="tab-panel" id="tab-activity">
-        <h3 class="tab-section-title">Recent Activity</h3>
-        <div class="activity-list" id="activityList"></div>
       </div>
 
     </div>
@@ -151,9 +145,12 @@
     <div class="footer-content">
       <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
       <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li></ul></div>
-      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 8863038229</p></div>
     </div>
-    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
   </footer>
 
   <script src="../js/config.js"></script>

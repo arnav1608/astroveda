@@ -155,60 +155,127 @@
       <button class="carousel-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- SHARE YOUR EXPERIENCE -->
-    <div class="write-review-section">
-      <div class="review-outer-wrap">
-        <div class="review-left reveal">
-          <h3>Share Your Experience</h3>
-          <p>Had a consultation with Dr. Shastrijee? Your story helps thousands of others on their cosmic journey. Approved reviews appear in the Voices of Stars section above.</p>
-          <div class="review-perks">
-            <div class="review-perk"><i class="fas fa-check-circle"></i> Personally reviewed by Dr. Shastrijee before publishing</div>
-            <div class="review-perk"><i class="fas fa-check-circle"></i> Displayed with your name and location</div>
-            <div class="review-perk"><i class="fas fa-check-circle"></i> Helps others make the right decision</div>
-            <div class="review-perk"><i class="fas fa-lock"></i> Account required — takes 30 seconds to create</div>
+    <!-- SHARE YOUR EXPERIENCE — Premium redesign -->
+    <div class="write-review-section" style="margin-top:5rem;padding:0 2rem;">
+      <div style="max-width:1200px;margin:0 auto;">
+
+        <!-- Section Header -->
+        <div class="section-header reveal" style="margin-bottom:3rem;">
+          <div class="section-badge">Share Your Experience</div>
+          <h2 class="section-title">Write a <em>Review</em></h2>
+          <p class="section-sub">Had a consultation? Your story helps thousands on their cosmic journey.</p>
+        </div>
+
+        <!-- Two column layout -->
+        <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:3rem;align-items:start;" class="review-grid-wrap">
+
+          <!-- LEFT: Info -->
+          <div class="reveal" style="display:flex;flex-direction:column;gap:1.5rem;">
+            <!-- Trust badges -->
+            <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:20px;padding:2rem;">
+              <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--gold);margin-bottom:1.2rem;">Why Your Review Matters</div>
+              <div style="display:flex;flex-direction:column;gap:.9rem;">
+                <div style="display:flex;align-items:center;gap:.9rem;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-check" style="color:#25d366;font-size:.85rem;"></i></div>
+                  <span style="font-family:var(--font-ui);font-size:.92rem;color:var(--white-soft);line-height:1.5;">Personally reviewed by Dr. Shastrijee before publishing</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:.9rem;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-check" style="color:#25d366;font-size:.85rem;"></i></div>
+                  <span style="font-family:var(--font-ui);font-size:.92rem;color:var(--white-soft);line-height:1.5;">Displayed with your name and city on the website</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:.9rem;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-check" style="color:#25d366;font-size:.85rem;"></i></div>
+                  <span style="font-family:var(--font-ui);font-size:.92rem;color:var(--white-soft);line-height:1.5;">Helps thousands of others on their cosmic journey</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:.9rem;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-lock" style="color:var(--gold);font-size:.85rem;"></i></div>
+                  <span style="font-family:var(--font-ui);font-size:.92rem;color:var(--white-soft);line-height:1.5;">Account required — takes only 30 seconds to create</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:1.2rem;text-align:center;">
+                <div style="font-family:var(--font-display);font-size:1.8rem;color:var(--gold);">15K+</div>
+                <div style="font-family:var(--font-ui);font-size:.78rem;color:var(--silver);letter-spacing:.08em;text-transform:uppercase;margin-top:.2rem;">Happy Clients</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:1.2rem;text-align:center;">
+                <div style="font-family:var(--font-display);font-size:1.8rem;color:var(--gold);">40+</div>
+                <div style="font-family:var(--font-ui);font-size:.78rem;color:var(--silver);letter-spacing:.08em;text-transform:uppercase;margin-top:.2rem;">Countries</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Form Card -->
+          <div class="reveal" style="background:rgba(8,8,30,0.8);border:1px solid rgba(201,168,76,0.25);border-radius:24px;padding:2.5rem;backdrop-filter:blur(20px);box-shadow:0 0 60px rgba(74,29,150,0.3);">
+
+            <!-- Header -->
+            <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;">
+              <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--black);">✍️</div>
+              <div>
+                <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--white);">Write a Review</div>
+                <div style="font-family:var(--font-ui);font-size:.8rem;color:var(--silver);">Share what Dr. Shastrijee helped you with</div>
+              </div>
+            </div>
+
+            <!-- Login notice (shown when not logged in) -->
+            <div id="reviewLoginNotice" style="display:none;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-family:var(--font-ui);font-size:.88rem;color:var(--silver);margin-bottom:1rem;">
+              <i class="fas fa-lock" style="color:var(--gold);"></i>
+              <span>Please <a href="pages/auth.html" style="color:var(--gold);font-weight:700;">login or sign up</a> to write a review.</span>
+            </div>
+
+            <div id="reviewFormFields">
+              <!-- Star Rating -->
+              <div style="margin-bottom:1.5rem;">
+                <div style="font-family:var(--font-ui);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem;">Your Rating</div>
+                <div style="display:flex;align-items:center;gap:.5rem;">
+                  <div id="starRating" style="display:flex;gap:.3rem;">
+                    <span class="star-inp" data-val="1" style="font-size:2.4rem;color:rgba(201,168,76,0.2);cursor:pointer;transition:all .15s;line-height:1;">★</span>
+                    <span class="star-inp" data-val="2" style="font-size:2.4rem;color:rgba(201,168,76,0.2);cursor:pointer;transition:all .15s;line-height:1;">★</span>
+                    <span class="star-inp" data-val="3" style="font-size:2.4rem;color:rgba(201,168,76,0.2);cursor:pointer;transition:all .15s;line-height:1;">★</span>
+                    <span class="star-inp" data-val="4" style="font-size:2.4rem;color:rgba(201,168,76,0.2);cursor:pointer;transition:all .15s;line-height:1;">★</span>
+                    <span class="star-inp" data-val="5" style="font-size:2.4rem;color:rgba(201,168,76,0.2);cursor:pointer;transition:all .15s;line-height:1;">★</span>
+                  </div>
+                  <span id="starLabel" style="font-family:var(--font-ui);font-size:.88rem;color:var(--gold);margin-left:.5rem;"></span>
+                </div>
+              </div>
+
+              <!-- Name & City in 2 columns -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+                <div>
+                  <label style="display:block;font-family:var(--font-ui);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;">Your Name</label>
+                  <input type="text" class="form-input" id="reviewName" readonly style="opacity:0.65;cursor:not-allowed;"/>
+                </div>
+                <div>
+                  <label style="display:block;font-family:var(--font-ui);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;">City / Country</label>
+                  <input type="text" class="form-input" id="reviewLocation" placeholder="e.g. Mumbai, India"/>
+                </div>
+              </div>
+
+              <!-- Experience textarea -->
+              <div style="margin-bottom:1.5rem;">
+                <label style="display:block;font-family:var(--font-ui);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;">Your Experience</label>
+                <textarea class="form-textarea" id="reviewText" placeholder="What did Dr. Shastrijee help you with? How accurate were the predictions? Please write at least 20 characters." style="min-height:120px;resize:vertical;"></textarea>
+              </div>
+
+              <!-- Submit button -->
+              <button class="btn-primary" id="submitReviewBtn" style="width:100%;justify-content:center;font-size:1rem;padding:1rem 2rem;">
+                <i class="fas fa-paper-plane"></i><span>Submit Review</span>
+              </button>
+              <p style="font-family:var(--font-ui);font-size:.72rem;color:var(--silver);text-align:center;margin-top:.8rem;opacity:.7;">⭐ Reviews are personally approved by Dr. Shastrijee before appearing publicly.</p>
+            </div>
           </div>
         </div>
-        <div class="review-form-card reveal">
-          <h4>✍️ Write a Review</h4>
-          <p>Rate your experience and share what Dr. Shastrijee helped you with.</p>
-          <div class="review-login-notice" id="reviewLoginNotice" style="display:none;">
-            <i class="fas fa-lock"></i>
-            <span>Please <a href="pages/auth.html">login or sign up</a> to write a review.</span>
-          </div>
-          <div id="reviewFormFields">
-            <div class="star-rating-row">
-              <span class="star-rating-label">Rating:</span>
-              <div class="stars-wrap" id="starRating">
-                <span class="star-inp" data-val="1">★</span>
-                <span class="star-inp" data-val="2">★</span>
-                <span class="star-inp" data-val="3">★</span>
-                <span class="star-inp" data-val="4">★</span>
-                <span class="star-inp" data-val="5">★</span>
-              </div>
-              <span id="starLabel" style="font-family:var(--font-ui);font-size:0.8rem;color:var(--gold);"></span>
-            </div>
-            <div class="review-row-2">
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label">Your Name</label>
-                <input type="text" class="form-input" id="reviewName" readonly style="opacity:0.7;"/>
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label">City / Country</label>
-                <input type="text" class="form-input" id="reviewLocation" placeholder="e.g. Mumbai, India"/>
-              </div>
-            </div>
-            <div class="form-group" style="margin-top:0.8rem;">
-              <label class="form-label">Your Experience</label>
-              <textarea class="form-textarea" id="reviewText" placeholder="What did Dr. Shastrijee help you with? How accurate were the predictions? Min 20 characters." style="min-height:100px;"></textarea>
-            </div>
-            <button class="btn-primary" id="submitReviewBtn" style="width:100%;justify-content:center;margin-top:0.5rem;">
-              <i class="fas fa-paper-plane"></i><span>Submit</span>
-            </button>
-            <p style="font-family:var(--font-ui);font-size:0.72rem;color:var(--silver);text-align:center;margin-top:0.5rem;">Reviews are approved by Dr. Shastrijee before appearing publicly.</p>
-          </div>
-        </div>
+
       </div>
     </div>
+    <style>
+      @media (max-width: 768px) {
+        .review-grid-wrap { grid-template-columns: 1fr !important; gap: 2rem !important; }
+      }
+      .star-inp:hover, .star-inp.lit { color: var(--gold) !important; text-shadow: 0 0 12px rgba(201,168,76,.6); }
+    </style>
   </section>
 
   <!-- FOOTER -->
@@ -256,7 +323,7 @@
     </div>
     <div class="footer-bottom">
       <p>© 2024 AstroVeda · Dr. Rajesh R Shastrijee · All Rights Reserved</p>
-      <p><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+      <p><a href="pages/privacy.html">Privacy Policy</a> · <a href="pages/terms.html">Terms of Service</a></p>
     </div>
   </footer>
 

@@ -1,0 +1,4 @@
+/* RIGHT PANEL FIX — remove max-height clip, fix overflow */
+.auth-card { overflow: visible !important; }
+.right-panel { max-height: none !important; overflow-y: visible !important; }
+.auth-page { align-items: flex-start !important; overflow-y: auto !important; }

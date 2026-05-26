@@ -172,7 +172,13 @@
       <div class="payment-modal-content">
         <h3>💫 Complete Payment</h3>
         <p>Scan the QR code and complete payment to confirm your booking.</p>
-        <div class="qr-placeholder"><div class="qr-inner"><div class="qr-grid"></div><p class="qr-label">Scan to Pay</p></div></div>
+        <div class="qr-placeholder" onclick="enlargeQR(this)" title="Click to enlarge" style="cursor:zoom-in;">
+          <div class="qr-inner">
+            <div class="qr-grid"></div>
+            <p class="qr-label">Scan to Pay</p>
+          </div>
+        </div>
+
         <div class="payment-amount" id="paymentAmount">Amount: ₹2,500</div>
         <div class="payment-whatsapp-box">
           <i class="fab fa-whatsapp"></i>
@@ -206,7 +212,10 @@
       <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p></div>
       <div class="footer-contact"><h4>Contact</h4><p><i class="fas fa-phone"></i> +91 8863038229</p><p><i class="fas fa-envelope"></i> astrorrshastri@gmail.com</p></div>
     </div>
-    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
   </footer>
 
   <script src="../js/config.js"></script>

@@ -13,115 +13,157 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     /* ── Extra dashboard styles ── */
-    .img-upload-area { border:2px dashed rgba(201,168,76,.3); border-radius:14px; padding:1.5rem; text-align:center; cursor:pointer; transition:all .3s; background:rgba(201,168,76,.04); position:relative; }
-    .img-upload-area:hover { border-color:var(--gold); background:rgba(201,168,76,.08); }
-    .img-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
-    .img-upload-area i { font-size:2rem; color:rgba(201,168,76,.5); display:block; margin-bottom:.5rem; }
-    .img-upload-area span { font-family:var(--font-ui); font-size:.82rem; color:var(--silver); }
-    .img-preview-wrap { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:.8rem; }
-    .img-preview-item { position:relative; width:80px; height:80px; border-radius:10px; overflow:hidden; border:1px solid var(--glass-border); }
-    .img-preview-item img { width:100%; height:100%; object-fit:cover; }
-    .img-preview-item .del-img { position:absolute;top:2px;right:2px;background:rgba(255,107,107,.9);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center; }
-    .img-url-input { margin-top:.6rem; }
-
-    /* Post type tabs */
-    .post-type-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
-    .ptype-btn { padding:.45rem 1rem; border-radius:20px; border:1px solid var(--glass-border); background:rgba(255,255,255,.04); color:var(--silver); font-family:var(--font-ui); font-size:.78rem; font-weight:600; cursor:pointer; transition:all .3s; }
-    .ptype-btn.active { background:rgba(201,168,76,.15); border-color:var(--gold); color:var(--gold); }
-
-    /* Poll builder */
-    .poll-option-row { display:flex; gap:.5rem; margin-bottom:.5rem; align-items:center; }
-    .poll-option-row input { flex:1; }
-    .poll-del-btn { background:rgba(255,107,107,.1); border:1px solid rgba(255,107,107,.2); color:#ff6b6b; border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:.8rem; flex-shrink:0; }
-    .add-poll-btn { background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2); color:var(--gold); font-family:var(--font-ui); font-size:.78rem; padding:.4rem .8rem; border-radius:8px; cursor:pointer; margin-top:.3rem; }
-
-    /* Content sections inside post modal */
-    .post-section { background:rgba(255,255,255,.03); border:1px solid var(--glass-border); border-radius:12px; padding:1rem; margin-bottom:.8rem; }
-    .post-section-title { font-family:var(--font-ui); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-bottom:.7rem; }
-
-    /* Website control panel */
-    .control-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-bottom:2rem; }
-    .control-card { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:16px; padding:1.3rem; }
-    .control-card h4 { font-family:var(--font-ui); font-size:.82rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
-    .control-item { display:flex; align-items:center; justify-content:space-between; padding:.55rem 0; border-bottom:1px solid rgba(255,255,255,.04); font-family:var(--font-ui); font-size:.83rem; color:var(--silver); }
-    .control-item:last-child { border-bottom:none; }
-    .ctrl-btn { padding:.3rem .7rem; border-radius:8px; border:none; font-family:var(--font-ui); font-size:.72rem; font-weight:600; cursor:pointer; transition:all .3s; }
-    .ctrl-btn.edit { background:rgba(72,202,228,.1); color:#48cae4; }
-    .ctrl-btn.edit:hover { background:rgba(72,202,228,.2); }
-    .ctrl-btn.del { background:rgba(255,107,107,.1); color:#ff6b6b; }
-    .ctrl-btn.del:hover { background:rgba(255,107,107,.2); }
-    .ctrl-btn.add { background:rgba(201,168,76,.12); color:var(--gold); }
-    .ctrl-btn.add:hover { background:rgba(201,168,76,.22); }
-    .ctrl-btn.pub { background:rgba(37,211,102,.1); color:#25d366; }
-    .ctrl-btn.pub:hover { background:rgba(37,211,102,.2); }
-
-    /* Inline edit input */
-    .inline-edit-input { background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:8px; color:var(--white); font-family:var(--font-ui); font-size:.83rem; padding:.35rem .7rem; width:100%; margin-top:.4rem; outline:none; }
-    .inline-edit-input:focus { border-color:var(--gold); }
-
-    /* Review cards in dashboard */
-    .review-dash-card { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:12px; padding:1.2rem; margin-bottom:.8rem; }
-    .review-dash-stars { color:var(--gold); font-size:1rem; margin-bottom:.4rem; }
-    .review-dash-text { color:var(--white-soft); font-size:.9rem; line-height:1.6; margin-bottom:.8rem; font-style:italic; }
-    .review-dash-meta { font-family:var(--font-ui); font-size:.78rem; color:var(--silver); margin-bottom:.7rem; }
-
-    /* Achievement manager */
-    .ach-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-    .ach-item { background:rgba(255,255,255,.03); border:1px solid var(--glass-border); border-radius:12px; padding:1rem; position:relative; }
-    .ach-item h5 { font-family:var(--font-ui); font-size:.85rem; color:var(--white); margin-bottom:.3rem; }
-    .ach-item p { font-family:var(--font-ui); font-size:.75rem; color:var(--silver); }
-    .ach-actions { display:flex; gap:.4rem; margin-top:.6rem; }
-
-    /* Rashi guidance editor */
-    .rashi-editor-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; }
-    .rashi-editor-card { background:rgba(255,255,255,.03); border:1px solid var(--glass-border); border-radius:10px; padding:.9rem; cursor:pointer; transition:all .3s; }
-    .rashi-editor-card:hover { border-color:var(--gold); }
-    .rashi-editor-card h5 { font-family:var(--font-ui); font-size:.85rem; color:var(--gold); margin-bottom:.2rem; }
-    .rashi-editor-card p { font-family:var(--font-ui); font-size:.72rem; color:var(--silver); }
-
-    /* Toggle switch */
-    .toggle-switch { position:relative; width:42px; height:22px; flex-shrink:0; }
-    .toggle-switch input { opacity:0; width:0; height:0; }
-    .toggle-slider { position:absolute; inset:0; background:rgba(255,255,255,.1); border-radius:22px; cursor:pointer; transition:.3s; }
-    .toggle-slider:before { content:''; position:absolute; height:16px; width:16px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
-    .toggle-switch input:checked + .toggle-slider { background:var(--gold); }
-    .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+    .img-upload-area{border:2px dashed rgba(201,168,76,.3);border-radius:14px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;background:rgba(201,168,76,.04);}
+    .img-upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,.08);}
+    .img-upload-area i{font-size:2rem;color:rgba(201,168,76,.5);display:block;margin-bottom:.5rem;}
+    .img-upload-area span{font-family:var(--font-ui);font-size:.82rem;color:var(--silver);}
+    .img-preview-wrap{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.8rem;}
+    .img-preview-item{position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--glass-border);}
+    .img-preview-item img{width:100%;height:100%;object-fit:cover;}
+    .img-preview-item .del-img{position:absolute;top:2px;right:2px;background:rgba(255,107,107,.9);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .post-type-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+    .ptype-btn{padding:.45rem 1rem;border-radius:20px;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--silver);font-family:var(--font-ui);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .3s;}
+    .ptype-btn.active{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold);}
+    .poll-option-row{display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;}
+    .poll-option-row input{flex:1;}
+    .poll-del-btn{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);color:#ff6b6b;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:.8rem;flex-shrink:0;}
+    .add-poll-btn{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-family:var(--font-ui);font-size:.78rem;padding:.4rem .8rem;border-radius:8px;cursor:pointer;margin-top:.3rem;}
+    .post-section{background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:12px;padding:1rem;margin-bottom:.8rem;}
+    .post-section-title{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem;}
+    .control-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem;}
+    .control-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:1.3rem;}
+    .control-card h4{font-family:var(--font-ui);font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+    .control-item{display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--font-ui);font-size:.83rem;color:var(--silver);}
+    .control-item:last-child{border-bottom:none;}
+    .ctrl-btn{padding:.3rem .7rem;border-radius:8px;border:none;font-family:var(--font-ui);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .3s;}
+    .ctrl-btn.edit{background:rgba(72,202,228,.1);color:#48cae4;}
+    .ctrl-btn.edit:hover{background:rgba(72,202,228,.2);}
+    .ctrl-btn.del{background:rgba(255,107,107,.1);color:#ff6b6b;}
+    .ctrl-btn.del:hover{background:rgba(255,107,107,.2);}
+    .ctrl-btn.add{background:rgba(201,168,76,.12);color:var(--gold);}
+    .ctrl-btn.add:hover{background:rgba(201,168,76,.22);}
+    .review-dash-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+    .review-dash-stars{color:var(--gold);font-size:1rem;margin-bottom:.4rem;}
+    .review-dash-text{color:var(--white-soft);font-size:.9rem;line-height:1.6;margin-bottom:.8rem;font-style:italic;}
+    .review-dash-meta{font-family:var(--font-ui);font-size:.78rem;color:var(--silver);margin-bottom:.7rem;}
+    .rashi-editor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
+    .rashi-editor-card{background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .3s;}
+    .rashi-editor-card:hover{border-color:var(--gold);}
+    .rashi-editor-card h5{font-family:var(--font-ui);font-size:.85rem;color:var(--gold);margin-bottom:.2rem;}
+    .rashi-editor-card p{font-family:var(--font-ui);font-size:.72rem;color:var(--silver);}
+    .toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0;}
+    .toggle-switch input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:22px;cursor:pointer;transition:.3s;}
+    .toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+    .toggle-switch input:checked+.toggle-slider{background:var(--gold);}
+    .toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);}
+    .danger-btn{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;border-radius:10px;padding:.5rem 1rem;font-family:var(--font-ui);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .3s;}
+    .danger-btn:hover{background:rgba(255,107,107,.25);}
+    @media(max-width:768px){.control-grid{grid-template-columns:1fr!important;}}
   </style>
 </head>
 <body class="dashboard-body">
-  <canvas id="cosmicCanvas"></canvas>
+  <!-- Canvas background — pointer-events:none so it NEVER blocks clicks -->
+  <canvas id="cosmicCanvas" style="pointer-events:none;"></canvas>
+  <!-- Nav is shown on dashboard (moderator can navigate back to site) -->
   <nav class="navbar" id="navbar"></nav>
 
-  <!-- ═══ MODERATOR LOGIN GATE ═══ -->
-  <div class="mod-login-gate" id="modLoginGate">
-    <div class="mod-login-card glass-card">
-      <div class="mod-login-logo">✦ AstroVeda</div>
-      <div class="mod-login-icon">🔐</div>
-      <h3>Moderator Access</h3>
-      <p>Enter your moderator credentials to access the dashboard.</p>
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input type="text" class="form-input" id="modUsername" placeholder="Moderator username" autocomplete="username"/>
+  <!-- ══════════════════════════════════════════════════════════
+       LOGIN GATE — fully self-contained, z-index:99999
+       No dependency on any external CSS or JS
+  ══════════════════════════════════════════════════════════ -->
+  <div id="modLoginGate" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:5rem 1rem 1rem;background:rgba(2,2,10,0.97);">
+    <div style="max-width:420px;width:100%;background:rgba(8,8,30,0.98);border:1px solid rgba(201,168,76,0.35);border-radius:24px;padding:2.5rem;text-align:center;box-shadow:0 0 80px rgba(74,29,150,0.5);">
+
+      <div style="font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:#c9a84c;margin-bottom:.8rem;">✦ AstroVeda</div>
+      <div style="font-size:3rem;margin-bottom:.8rem;">🔐</div>
+      <h3 style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:#f5f0ff;margin-bottom:.4rem;">Moderator Access</h3>
+      <p style="font-family:'Rajdhani',sans-serif;color:rgba(168,164,200,.8);font-size:.9rem;margin-bottom:1.8rem;">Enter your moderator credentials to access the dashboard.</p>
+
+      <div style="margin-bottom:1rem;text-align:left;">
+        <label style="display:block;font-family:'Rajdhani',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#c9a84c;margin-bottom:.5rem;">Username</label>
+        <input id="modUsername" type="text" placeholder="Enter username" autocomplete="username"
+          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(201,168,76,.3);border-radius:12px;color:#f5f0ff;font-family:'Rajdhani',sans-serif;font-size:1rem;padding:.85rem 1.2rem;outline:none;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter')document.getElementById('modPassword').focus()"/>
       </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
+
+      <div style="margin-bottom:1.2rem;text-align:left;">
+        <label style="display:block;font-family:'Rajdhani',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#c9a84c;margin-bottom:.5rem;">Password</label>
         <div style="position:relative;">
-          <input type="password" class="form-input" id="modPassword" placeholder="Moderator password" autocomplete="current-password"/>
-          <button class="toggle-pw" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--silver);cursor:pointer;" onclick="togglePw('modPassword',this)"><i class="fas fa-eye"></i></button>
+          <input id="modPassword" type="password" placeholder="Enter password" autocomplete="current-password"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(201,168,76,.3);border-radius:12px;color:#f5f0ff;font-family:'Rajdhani',sans-serif;font-size:1rem;padding:.85rem 3rem .85rem 1.2rem;outline:none;box-sizing:border-box;"
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+          <span onclick="var i=document.getElementById('modPassword');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='text'?'🙈':'👁';"
+            style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1.1rem;user-select:none;line-height:1;">👁</span>
         </div>
       </div>
-      <div class="mod-login-error" id="modLoginError" style="display:none;"></div>
-      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="modLogin()">
-        <i class="fas fa-unlock"></i><span>Access Dashboard</span>
-      </button>
-      <a href="../index.html" style="font-family:var(--font-ui);font-size:.85rem;color:var(--silver);text-align:center;display:block;margin-top:1rem;">← Back to Website</a>
+
+      <div id="modLoginError" style="display:none;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;font-family:'Rajdhani',sans-serif;font-size:.88rem;padding:.7rem 1rem;border-radius:10px;margin-bottom:1rem;"></div>
+
+      <!-- ACCESS DASHBOARD — div with onclick, cannot be blocked -->
+      <div onclick="doLogin()"
+        style="width:100%;background:linear-gradient(135deg,#c9a84c,#f0d080);color:#020210;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:1rem 2rem;border-radius:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;box-shadow:0 0 25px rgba(201,168,76,.4);box-sizing:border-box;">
+        🔓 &nbsp;ACCESS DASHBOARD
+      </div>
+
+      <a href="../index.html" style="font-family:'Rajdhani',sans-serif;font-size:.85rem;color:rgba(168,164,200,.7);display:block;margin-top:1.2rem;text-decoration:none;">← Back to Website</a>
     </div>
   </div>
 
-  <!-- ═══ DASHBOARD ═══ -->
+  <!-- Self-contained login script — runs BEFORE dashboard.js, no race condition -->
+  <script>
+  function doLogin() {
+    var u   = (document.getElementById('modUsername').value||'').trim();
+    var p   = (document.getElementById('modPassword').value||'');
+    var err = document.getElementById('modLoginError');
+    err.style.display = 'none';
+    if (!u||!p) { err.textContent='Please enter username and password.'; err.style.display='block'; return; }
+    if (u==='admin' && p==='astroveda2024') {
+      var mod = {id:'mod_1',name:'Dr. Rajesh R Shastrijee',username:'admin',mobile:'8863038229',role:'moderator',joined:new Date().toISOString()};
+      localStorage.setItem('astroveda_current_user', JSON.stringify(mod));
+      // Hide gate, show dashboard immediately (don’t wait for API)
+      document.getElementById('modLoginGate').style.display  = 'none';
+      document.getElementById('dashboardWrap').style.display = 'flex';
+      // Also try to get a real JWT token from backend for API calls (users, feedback)
+      var api = (window.ASTROVEDA_API) || 'http://localhost:5000/api';
+      fetch(api + '/auth/mod-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.success && d.token) {
+          localStorage.setItem('astroveda_token', d.token);
+          if (d.user) localStorage.setItem('astroveda_current_user', JSON.stringify(Object.assign(mod, d.user, {role:'moderator'})));
+        }
+      })
+      .catch(function(){}); // backend offline — dashboard still works from localStorage
+      // Init dashboard (50ms to let dashboard.js parse)
+      setTimeout(function(){
+        if (typeof initDashboard==='function') initDashboard();
+        else setTimeout(function(){ if(typeof initDashboard==='function') initDashboard(); },400);
+      },50);
+      return;
+    }
+    err.textContent = 'Invalid credentials. Please try again.';
+    err.style.display = 'block';
+  }
+  // Auto-hide gate if already logged in as moderator
+  (function(){
+    try {
+      var u = JSON.parse(localStorage.getItem('astroveda_current_user')||'null');
+      if (u && u.role==='moderator') document.getElementById('modLoginGate').style.display='none';
+    } catch(e){}
+  })();
+  </script>
+
+  <!-- ══════════════════════════════════════════════════════════
+       DASHBOARD WRAP
+  ══════════════════════════════════════════════════════════ -->
   <div class="dashboard-wrap" id="dashboardWrap" style="display:none;">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="dash-sidebar" id="dashSidebar">
       <div class="dash-logo">✦ AstroVeda</div>
       <div class="dash-admin-info">
@@ -144,14 +186,12 @@
       <button class="dash-logout-btn" onclick="modLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </aside>
 
-    <!-- Main -->
+    <!-- MAIN -->
     <main class="dash-main">
       <div class="dash-topbar">
         <button class="dash-menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
         <h2 class="dash-page-title" id="dashTitle">Overview</h2>
-        <div class="dash-topbar-right">
-          <span style="font-family:var(--font-ui);font-size:.85rem;color:var(--silver);" id="dashDateTime"></span>
-        </div>
+        <div class="dash-topbar-right"><span style="font-family:var(--font-ui);font-size:.85rem;color:var(--silver);" id="dashDateTime"></span></div>
       </div>
 
       <!-- ── OVERVIEW ── -->
@@ -166,7 +206,6 @@
       <!-- ── WEBSITE CONTROL ── -->
       <div class="dash-panel" id="panel-sitecontrol">
         <div class="control-grid">
-          <!-- Hero Section -->
           <div class="control-card">
             <h4><i class="fas fa-home"></i> Hero Section</h4>
             <div class="control-item"><span>Hero Title</span><button class="ctrl-btn edit" onclick="editSiteSetting('heroTitle','AstroVeda')">Edit</button></div>
@@ -174,7 +213,6 @@
             <div class="control-item"><span>Hero Description</span><button class="ctrl-btn edit" onclick="editSiteSetting('heroDesc','')">Edit</button></div>
             <div class="control-item"><span>CTA Button Text</span><button class="ctrl-btn edit" onclick="editSiteSetting('heroCTA','Book Consultation')">Edit</button></div>
           </div>
-          <!-- Founder Info -->
           <div class="control-card">
             <h4><i class="fas fa-user-circle"></i> Founder Info</h4>
             <div class="control-item"><span>Founder Name</span><button class="ctrl-btn edit" onclick="editSiteSetting('founderName','Dr. Rajesh R Shastrijee')">Edit</button></div>
@@ -182,14 +220,12 @@
             <div class="control-item"><span>Founder Description</span><button class="ctrl-btn edit" onclick="editSiteSetting('founderDesc','')">Edit</button></div>
             <div class="control-item"><span>Founder Photo</span><button class="ctrl-btn edit" onclick="editSiteImage('founderPhoto')">Upload</button></div>
           </div>
-          <!-- Contact Info -->
           <div class="control-card">
             <h4><i class="fas fa-phone"></i> Contact Details</h4>
-            <div class="control-item"><span>Phone Number</span><button class="ctrl-btn edit" onclick="editSiteSetting('contactPhone','+91 8863038229')">Edit</button></div>
+            <div class="control-item"><span>Phone / WhatsApp</span><button class="ctrl-btn edit" onclick="editSiteSetting('whatsapp','8863038229')">Edit</button></div>
             <div class="control-item"><span>Email Address</span><button class="ctrl-btn edit" onclick="editSiteSetting('contactEmail','astrorrshastri@gmail.com')">Edit</button></div>
-            <div class="control-item"><span>WhatsApp Number</span><button class="ctrl-btn edit" onclick="editSiteSetting('whatsapp','8863038229')">Edit</button></div>
+            <div class="control-item"><span>Location Text</span><button class="ctrl-btn edit" onclick="editSiteSetting('contactLocation','India (Worldwide)')">Edit</button></div>
           </div>
-          <!-- Stats -->
           <div class="control-card">
             <h4><i class="fas fa-chart-bar"></i> Stats / Counters</h4>
             <div class="control-item"><span>Happy Clients</span><button class="ctrl-btn edit" onclick="editSiteSetting('statClients','15000')">Edit</button></div>
@@ -197,14 +233,39 @@
             <div class="control-item"><span>Consultations</span><button class="ctrl-btn edit" onclick="editSiteSetting('statConsults','50000')">Edit</button></div>
             <div class="control-item"><span>Awards Won</span><button class="ctrl-btn edit" onclick="editSiteSetting('statAwards','120')">Edit</button></div>
           </div>
-          <!-- Services -->
           <div class="control-card">
             <h4><i class="fas fa-star"></i> Services Pricing</h4>
             <div class="control-item"><span>Free Consultation</span><span style="color:#25d366;font-family:var(--font-ui);font-size:.75rem;">FREE</span></div>
-            <div class="control-item"><span>Jyotish Vishleshan</span><button class="ctrl-btn edit" onclick="editSiteSetting('priceJyotish','2500')">₹2500</button></div>
-            <div class="control-item"><span>Kundli Nirman</span><button class="ctrl-btn edit" onclick="editSiteSetting('priceKundli','1500')">₹1500</button></div>
+            <div class="control-item"><span>Jyotish Vishleshan</span><button class="ctrl-btn edit" id="btnPriceJyotish" onclick="editSiteSetting('priceJyotish','2500')">Edit</button></div>
+            <div class="control-item"><span>Kundli Nirman</span><button class="ctrl-btn edit" id="btnPriceKundli" onclick="editSiteSetting('priceKundli','1500')">Edit</button></div>
           </div>
-          <!-- Site Settings -->
+          <div class="control-card">
+            <h4><i class="fas fa-share-alt"></i> Social Links</h4>
+            <div class="control-item"><span>Instagram URL</span><button class="ctrl-btn edit" onclick="editSiteSetting('socialInstagram','https://instagram.com')">Edit</button></div>
+            <div class="control-item"><span>YouTube URL</span><button class="ctrl-btn edit" onclick="editSiteSetting('socialYoutube','https://youtube.com')">Edit</button></div>
+            <div class="control-item"><span>Facebook URL</span><button class="ctrl-btn edit" onclick="editSiteSetting('socialFacebook','https://facebook.com')">Edit</button></div>
+            <div class="control-item"><span>WhatsApp Number</span><button class="ctrl-btn edit" onclick="editSiteSetting('whatsapp','8863038229')">Edit</button></div>
+          </div>
+          <div class="control-card">
+            <h4><i class="fas fa-qrcode"></i> QR Code &amp; Media</h4>
+            <div class="control-item"><span>Payment QR Code</span>
+              <div style="display:flex;gap:.4rem;">
+                <button class="ctrl-btn edit" onclick="editSiteImage('qrCode')"><i class="fas fa-upload"></i> Upload</button>
+                <button class="ctrl-btn add" onclick="previewQR()"><i class="fas fa-search-plus"></i> View</button>
+              </div>
+            </div>
+            <div id="qrPreviewThumb" style="margin-top:.8rem;display:none;"><img id="qrThumbImg" style="width:80px;height:80px;object-fit:contain;border-radius:8px;border:1px solid rgba(201,168,76,.3);cursor:zoom-in;" onclick="previewQR()" onerror="this.parentElement.style.display='none'"/><p style="font-family:var(--font-ui);font-size:.7rem;color:var(--silver);margin-top:.3rem;">Click to enlarge</p></div>
+            <div class="control-item"><span>Logo Image</span><button class="ctrl-btn edit" onclick="editSiteImage('logoImage')"><i class="fas fa-upload"></i> Upload</button></div>
+            <div class="control-item"><span>OG Image</span><button class="ctrl-btn edit" onclick="editSiteImage('ogImage')"><i class="fas fa-upload"></i> Upload</button></div>
+          </div>
+          <div class="control-card" style="border-color:rgba(255,107,107,.3);">
+            <h4><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i> <span style="color:#ff6b6b;">Danger Zone</span></h4>
+            <div class="control-item"><span>Reset All Users</span><button class="danger-btn" style="font-size:.72rem;padding:.25rem .6rem;" onclick="resetAllUsers()">Reset Users</button></div>
+            <div class="control-item"><span>Reset All Feedbacks</span><button class="danger-btn" style="font-size:.72rem;padding:.25rem .6rem;" onclick="resetFeedbacks()">Clear</button></div>
+            <div class="control-item"><span>Reset Reviews/Testimonials</span><button class="danger-btn" style="font-size:.72rem;padding:.25rem .6rem;" onclick="resetReviews()">Clear</button></div>
+            <div class="control-item"><span>Reset All Achievements</span><button class="danger-btn" style="font-size:.72rem;padding:.25rem .6rem;" onclick="clearAllAchievements()">Clear</button></div>
+            <div class="control-item"><span>Reset Upcoming Events</span><button class="danger-btn" style="font-size:.72rem;padding:.25rem .6rem;" onclick="resetEvents()">Clear Events</button></div>
+          </div>
           <div class="control-card">
             <h4><i class="fas fa-cog"></i> Site Settings</h4>
             <div class="control-item"><span>Maintenance Mode</span>
@@ -218,29 +279,17 @@
             </div>
           </div>
         </div>
-
-        <!-- Edit inline area -->
-        <div class="dash-card" id="siteEditArea" style="display:none;">
-          <h4 class="dash-card-title" id="siteEditTitle">Edit Setting</h4>
-          <textarea class="form-textarea inline-edit-input" id="siteEditInput" style="min-height:80px;margin-top:0;"></textarea>
-          <div style="display:flex;gap:.8rem;margin-top:.8rem;">
-            <button class="btn-primary" style="padding:.6rem 1.5rem;font-size:.85rem;" onclick="saveSiteSetting()"><i class="fas fa-save"></i><span>Save</span></button>
-            <button style="padding:.6rem 1.2rem;background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:25px;color:var(--silver);font-family:var(--font-ui);font-size:.85rem;cursor:pointer;" onclick="document.getElementById('siteEditArea').style.display='none'">Cancel</button>
-          </div>
-        </div>
       </div>
 
       <!-- ── USERS ── -->
       <div class="dash-panel" id="panel-users">
         <div class="dash-panel-toolbar">
           <div class="search-bar" style="max-width:300px;"><i class="fas fa-search"></i><input type="text" placeholder="Search users..." id="userSearch" oninput="renderUsersTable()"/></div>
+          <button onclick="loadUsersFromAPI()" style="background:rgba(72,202,228,.1);border:1px solid rgba(72,202,228,.25);color:#48cae4;border-radius:20px;padding:.4rem 1rem;font-family:var(--font-ui);font-size:.8rem;cursor:pointer;"><i class="fas fa-sync"></i> Refresh</button>
           <span class="tag tag-gold" id="userCount">0 Users</span>
         </div>
         <div class="dash-table-wrap">
-          <table class="dash-table">
-            <thead><tr><th>Name</th><th>Username</th><th>Mobile</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="usersTableBody"></tbody>
-          </table>
+          <table class="dash-table"><thead><tr><th>Name</th><th>Username</th><th>Mobile</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usersTableBody"></tbody></table>
         </div>
       </div>
 
@@ -251,25 +300,19 @@
           <span class="tag tag-gold" id="bookingCount">0 Bookings</span>
         </div>
         <div class="dash-table-wrap">
-          <table class="dash-table">
-            <thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Service</th><th>DOB</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody id="bookingsTableBody"></tbody>
-          </table>
+          <table class="dash-table"><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Service</th><th>DOB</th><th>Amount</th><th>Status</th><th>Del</th></tr></thead><tbody id="bookingsTableBody"></tbody></table>
         </div>
       </div>
 
       <!-- ── PRODUCTS ── -->
       <div class="dash-panel" id="panel-products">
-        <div class="dash-panel-toolbar">
+        <div class="dash-panel-toolbar" style="flex-wrap:wrap;gap:.6rem;">
           <button class="btn-primary" style="padding:.6rem 1.2rem;font-size:.85rem;" onclick="openAddProduct()"><i class="fas fa-plus"></i><span>Add Product</span></button>
-          <button style="padding:.6rem 1rem;background:rgba(72,202,228,.1);border:1px solid rgba(72,202,228,.25);color:#48cae4;border-radius:25px;font-family:var(--font-ui);font-size:.82rem;font-weight:600;cursor:pointer;" onclick="loadDefaultProducts()"><i class="fas fa-database"></i> Load All 38 Defaults</button>
+          <button class="danger-btn" onclick="clearAllProducts()"><i class="fas fa-trash"></i> Clear All</button>
           <span class="tag tag-gold" id="productCount">0 Products</span>
         </div>
         <div class="dash-table-wrap">
-          <table class="dash-table">
-            <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Planet</th><th>Price</th><th>Actions</th></tr></thead>
-            <tbody id="productsTableBody"></tbody>
-          </table>
+          <table class="dash-table"><thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Planet</th><th>Price</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table>
         </div>
       </div>
 
@@ -280,76 +323,59 @@
           <span class="tag tag-gold" id="postCount">0 Posts</span>
         </div>
         <div class="dash-table-wrap">
-          <table class="dash-table">
-            <thead><tr><th>Type</th><th>Preview</th><th>Likes</th><th>Comments</th><th>Actions</th></tr></thead>
-            <tbody id="postsTableBody"></tbody>
-          </table>
+          <table class="dash-table"><thead><tr><th>Type</th><th>Preview</th><th>Likes</th><th>Comments</th><th>Actions</th></tr></thead><tbody id="postsTableBody"></tbody></table>
         </div>
       </div>
 
       <!-- ── REVIEWS ── -->
       <div class="dash-panel" id="panel-reviews">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
-          <div class="dash-card">
-            <h4 class="dash-card-title">⏳ Pending Approval</h4>
-            <div id="pendingReviewsList"></div>
-          </div>
-          <div class="dash-card">
-            <h4 class="dash-card-title">✅ Approved Reviews</h4>
-            <div id="approvedReviewsList"></div>
-          </div>
+          <div class="dash-card"><h4 class="dash-card-title">⏳ Pending Approval</h4><div id="pendingReviewsList"></div></div>
+          <div class="dash-card"><h4 class="dash-card-title">✅ Approved Reviews</h4><div id="approvedReviewsList"></div></div>
         </div>
       </div>
 
       <!-- ── RASHI GUIDANCE ── -->
       <div class="dash-panel" id="panel-rashi">
-        <div class="dash-card" style="margin-bottom:1.5rem;">
+        <div class="dash-card">
           <h4 class="dash-card-title">🌙 Monthly Rashi Guidance Editor</h4>
-          <p style="font-family:var(--font-ui);font-size:.83rem;color:var(--silver);margin-bottom:1rem;">Click any Rashi to edit the monthly guidance shown to users.</p>
+          <p style="font-family:var(--font-ui);font-size:.83rem;color:var(--silver);margin-bottom:1rem;">Click any Rashi to edit guidance shown to users. Month/year is auto-dynamic.</p>
           <div class="rashi-editor-grid" id="rashiEditorGrid"></div>
         </div>
       </div>
 
       <!-- ── ACHIEVEMENTS ── -->
       <div class="dash-panel" id="panel-achievements">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+          <button class="danger-btn" onclick="clearAllAchievements()"><i class="fas fa-trash"></i> Clear All Achievements</button>
+        </div>
+        <!-- Warning for broken items from before compression fix -->
+        <div id="achBrokenWarning" style="display:none;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.3);color:#ffc107;border-radius:10px;padding:.8rem 1rem;margin-bottom:1rem;font-family:var(--font-ui);font-size:.83rem;"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
-
-          <!-- Awards -->
           <div class="dash-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
               <h4 class="dash-card-title" style="margin-bottom:0;">🏆 Awards</h4>
               <button class="ctrl-btn add" onclick="openAddAchievement('award')"><i class="fas fa-plus"></i> Add</button>
-            </div>
-            <div id="awardsManager"></div>
+            </div><div id="awardsManager"></div>
           </div>
-
-          <!-- Certificates -->
           <div class="dash-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
               <h4 class="dash-card-title" style="margin-bottom:0;">📜 Certificates</h4>
               <button class="ctrl-btn add" onclick="openAddAchievement('certificate')"><i class="fas fa-plus"></i> Add</button>
-            </div>
-            <div id="certificatesManager"></div>
+            </div><div id="certificatesManager"></div>
           </div>
-
-          <!-- Medals -->
           <div class="dash-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
               <h4 class="dash-card-title" style="margin-bottom:0;">🥇 Medals</h4>
               <button class="ctrl-btn add" onclick="openAddAchievement('medal')"><i class="fas fa-plus"></i> Add</button>
-            </div>
-            <div id="medalsManager"></div>
+            </div><div id="medalsManager"></div>
           </div>
-
-          <!-- Photos -->
           <div class="dash-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
               <h4 class="dash-card-title" style="margin-bottom:0;">📸 Photo Gallery</h4>
-              <button class="ctrl-btn add" onclick="openAddAchievement('photo')"><i class="fas fa-plus"></i> Add Photo</button>
-            </div>
-            <div id="photosManager"></div>
+              <button class="ctrl-btn add" onclick="openAddAchievement('photo')"><i class="fas fa-plus"></i> Add</button>
+            </div><div id="photosManager"></div>
           </div>
-
         </div>
       </div>
 
@@ -362,8 +388,6 @@
       <!-- ── PAGE EDITOR ── -->
       <div class="dash-panel" id="panel-pageeditor">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
-
-          <!-- About Page -->
           <div class="dash-card">
             <h4 class="dash-card-title">📖 About Page Content</h4>
             <div class="form-group"><label class="form-label">Mission Statement</label><textarea class="form-textarea" id="pgMission" style="min-height:80px;"></textarea></div>
@@ -372,8 +396,6 @@
             <div class="form-group"><label class="form-label">About Intro Text</label><textarea class="form-textarea" id="pgAboutIntro" style="min-height:100px;"></textarea></div>
             <button class="btn-primary" style="width:100%;justify-content:center;" onclick="savePageContent('about')"><i class="fas fa-save"></i><span>Save About Page</span></button>
           </div>
-
-          <!-- FAQ Editor -->
           <div class="dash-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
               <h4 class="dash-card-title" style="margin-bottom:0;">❓ FAQ Manager</h4>
@@ -381,33 +403,40 @@
             </div>
             <div id="faqManager"></div>
           </div>
-
-          <!-- Announcements / Events -->
-          <div class="dash-card">
-            <h4 class="dash-card-title">📅 Upcoming Events</h4>
-            <div id="eventsManager">
-              <p style="color:var(--silver);font-size:.83rem;margin-bottom:1rem;">Events are managed via the Announcements panel. Select type <strong style="color:var(--gold);">Event</strong> when creating a post.</p>
-              <button class="btn-primary" style="padding:.6rem 1.2rem;font-size:.85rem;" onclick="switchDash('announcements',document.querySelector('[onclick*=announcements]'))"><i class="fas fa-bullhorn"></i><span>Go to Announcements</span></button>
-            </div>
-          </div>
-
-          <!-- Daily Cosmic Tips -->
           <div class="dash-card">
             <h4 class="dash-card-title">✨ Daily Cosmic Tips</h4>
-            <div class="form-group"><label class="form-label">Today's Cosmic Tip</label><textarea class="form-textarea" id="pgDailyTip" style="min-height:100px;" placeholder="Share today's cosmic insight with users..."></textarea></div>
+            <div class="form-group"><label class="form-label">Today's Cosmic Tip</label><textarea class="form-textarea" id="pgDailyTip" style="min-height:100px;" placeholder="Share today's cosmic insight..."></textarea></div>
             <div class="form-group"><label class="form-label">Weekly Mantra</label><input type="text" class="form-input" id="pgWeeklyMantra" placeholder="e.g. Om Namah Shivaya — repeat 108 times..."/></div>
-            <div class="form-group"><label class="form-label">Auspicious Days This Week</label><input type="text" class="form-input" id="pgAuspiciousDays" placeholder="Monday, Thursday — favorable for new beginnings..."/></div>
+            <div class="form-group"><label class="form-label">Auspicious Days This Week</label><input type="text" class="form-input" id="pgAuspiciousDays" placeholder="Monday, Thursday — favorable..."/></div>
             <button class="btn-primary" style="width:100%;justify-content:center;" onclick="savePageContent('tips')"><i class="fas fa-save"></i><span>Save Cosmic Tips</span></button>
           </div>
-
+          <div class="dash-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;">
+              <h4 class="dash-card-title" style="margin-bottom:0;">🔒 Privacy Policy</h4>
+              <a href="privacy.html" target="_blank" style="font-family:var(--font-ui);font-size:.75rem;color:#48cae4;display:flex;align-items:center;gap:.3rem;"><i class="fas fa-external-link-alt"></i> Preview</a>
+            </div>
+            <div class="form-group"><textarea class="form-textarea" id="pgPrivacy" style="min-height:220px;font-family:monospace;font-size:.78rem;"></textarea></div>
+            <button class="btn-primary" style="width:100%;justify-content:center;" onclick="savePageContent('legal')"><i class="fas fa-save"></i><span>Save Privacy &amp; Terms</span></button>
+          </div>
+          <div class="dash-card" style="grid-column:1/-1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;">
+              <h4 class="dash-card-title" style="margin-bottom:0;">📋 Terms of Service</h4>
+              <a href="terms.html" target="_blank" style="font-family:var(--font-ui);font-size:.75rem;color:#48cae4;display:flex;align-items:center;gap:.3rem;"><i class="fas fa-external-link-alt"></i> Preview</a>
+            </div>
+            <div class="form-group"><textarea class="form-textarea" id="pgTerms" style="min-height:240px;font-family:monospace;font-size:.78rem;"></textarea></div>
+            <button class="btn-primary" style="width:100%;justify-content:center;" onclick="savePageContent('legal')"><i class="fas fa-save"></i><span>Save Terms</span></button>
+          </div>
         </div>
       </div>
+
     </main>
-  </div>
+  </div><!-- end dashboardWrap -->
 
-  <!-- ═══ MODALS ═══ -->
+  <!-- ══════════════════════════════════════════════════════════
+       MODALS
+  ══════════════════════════════════════════════════════════ -->
 
-  <!-- User Detail -->
+  <!-- User detail -->
   <div class="modal-overlay" id="userDetailModal">
     <div class="modal" style="max-width:500px;">
       <button class="modal-close" onclick="closeModal('userDetailModal')"><i class="fas fa-times"></i></button>
@@ -415,169 +444,7 @@
     </div>
   </div>
 
-  <!-- Add/Edit Product — with image upload -->
-  <div class="modal-overlay" id="addProductModal">
-    <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
-      <button class="modal-close" onclick="closeModal('addProductModal')"><i class="fas fa-times"></i></button>
-      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.5rem;" id="productModalTitle">Add Product</h3>
-      <input type="hidden" id="editProductId"/>
-
-      <!-- Product Image -->
-      <div class="form-group">
-        <label class="form-label">Product Image</label>
-        <div class="img-upload-area" id="productImgArea" onclick="document.getElementById('productImgFile').click()">
-          <input type="file" id="productImgFile" accept="image/*" style="display:none;" onchange="previewProductImg(this)"/>
-          <i class="fas fa-camera"></i>
-          <span>Click to upload product photo (JPG, PNG, WebP)</span>
-        </div>
-        <div class="img-preview-wrap" id="productImgPreview"></div>
-        <div style="margin-top:.6rem;">
-          <label class="form-label" style="font-size:.7rem;">Or paste image URL</label>
-          <input type="url" class="form-input" id="pImageUrl" placeholder="https://example.com/image.jpg" style="margin-top:.3rem;"/>
-        </div>
-      </div>
-
-      <div class="form-group"><label class="form-label">Product Name</label><input type="text" class="form-input" id="pName" placeholder="e.g. Five Mukhi Rudraksha"/></div>
-      <div class="form-group"><label class="form-label">Emoji Icon</label><input type="text" class="form-input" id="pEmoji" placeholder="e.g. 📿" maxlength="4"/></div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-        <div class="form-group"><label class="form-label">Category</label>
-          <select class="form-input" id="pCategory">
-            <option value="gemstones">💎 Gemstones</option>
-            <option value="rudraksha">📿 Rudraksha</option>
-            <option value="yantras">🔯 Yantras</option>
-            <option value="spiritual">🕯️ Spiritual</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Price (₹)</label><input type="number" class="form-input" id="pPrice" placeholder="0"/></div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-        <div class="form-group"><label class="form-label">Ruling Planet</label><input type="text" class="form-input" id="pPlanet" placeholder="e.g. Moon (Chandra)"/></div>
-        <div class="form-group"><label class="form-label">Planet (Hindi)</label><input type="text" class="form-input" id="pPlanetHi" placeholder="e.g. चंद्र"/></div>
-      </div>
-
-      <div class="form-group"><label class="form-label">Benefits (comma separated)</label><input type="text" class="form-input" id="pBenefits" placeholder="Peace, clarity, emotional balance"/></div>
-      <div class="form-group"><label class="form-label">Short Description</label><textarea class="form-textarea" id="pDesc" style="min-height:70px;" placeholder="What is this product?"></textarea></div>
-      <div class="form-group"><label class="form-label">Detailed Info / Certification</label><textarea class="form-textarea" id="pDetail" style="min-height:70px;" placeholder="Origin, certification, energization details..."></textarea></div>
-
-      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveProduct()"><i class="fas fa-save"></i><span>Save Product</span></button>
-    </div>
-  </div>
-
-  <!-- Add Post — rich post builder -->
-  <div class="modal-overlay" id="addPostModal">
-    <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto;">
-      <button class="modal-close" onclick="closeModal('addPostModal')"><i class="fas fa-times"></i></button>
-      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;">✦ Create Post</h3>
-
-      <!-- Post Type -->
-      <div class="form-group">
-        <label class="form-label">Post Type</label>
-        <div class="post-type-tabs">
-          <button class="ptype-btn active" onclick="setPostType('announcement',this)">📢 Announcement</button>
-          <button class="ptype-btn" onclick="setPostType('event',this)">🌙 Event</button>
-          <button class="ptype-btn" onclick="setPostType('wisdom',this)">✨ Wisdom</button>
-          <button class="ptype-btn" onclick="setPostType('offer',this)">🎁 Offer</button>
-        </div>
-        <input type="hidden" id="postType" value="announcement"/>
-      </div>
-
-      <!-- Main text -->
-      <div class="post-section">
-        <div class="post-section-title">✍️ Message</div>
-        <textarea class="form-textarea" id="postText" style="min-height:120px;" placeholder="Write your announcement, wisdom or event details..."></textarea>
-      </div>
-
-      <!-- Images -->
-      <div class="post-section">
-        <div class="post-section-title">🖼️ Images (up to 4)</div>
-        <div class="img-upload-area" onclick="document.getElementById('postImgFiles').click()" style="padding:1rem;">
-          <input type="file" id="postImgFiles" accept="image/*" multiple style="display:none;" onchange="previewPostImages(this)"/>
-          <i class="fas fa-images" style="font-size:1.5rem;"></i>
-          <span>Click to upload images</span>
-        </div>
-        <div class="img-preview-wrap" id="postImgPreview"></div>
-        <div style="margin-top:.6rem;">
-          <input type="url" class="form-input" id="postImgUrl" placeholder="Or paste image URL..." style="margin-bottom:.4rem;"/>
-          <button class="add-poll-btn" onclick="addPostImageUrl()"><i class="fas fa-plus"></i> Add Image URL</button>
-        </div>
-        <div id="postImageUrls"></div>
-      </div>
-
-      <!-- Video -->
-      <div class="post-section">
-        <div class="post-section-title">🎥 Video Link</div>
-        <input type="url" class="form-input" id="postVideo" placeholder="YouTube / Instagram / Facebook video URL..."/>
-        <small style="font-family:var(--font-ui);font-size:.72rem;color:var(--silver);margin-top:.3rem;display:block;">Paste YouTube, Instagram Reel, or Facebook video link</small>
-      </div>
-
-      <!-- External Link -->
-      <div class="post-section">
-        <div class="post-section-title">🔗 External Link (Optional)</div>
-        <input type="url" class="form-input" id="postLink" placeholder="https://..."/>
-        <input type="text" class="form-input" id="postLinkText" placeholder="Link display text (e.g. 'Read More')" style="margin-top:.5rem;"/>
-      </div>
-
-      <!-- Poll -->
-      <div class="post-section">
-        <div class="post-section-title">📊 Poll (Optional)</div>
-        <input type="text" class="form-input" id="pollQuestion" placeholder="Poll question... (leave blank to skip)" style="margin-bottom:.8rem;"/>
-        <div id="pollOptions">
-          <div class="poll-option-row"><input type="text" class="form-input" placeholder="Option 1" value="Yes"/><button class="poll-del-btn" onclick="removePollOption(this)"><i class="fas fa-times"></i></button></div>
-          <div class="poll-option-row"><input type="text" class="form-input" placeholder="Option 2" value="No"/><button class="poll-del-btn" onclick="removePollOption(this)"><i class="fas fa-times"></i></button></div>
-        </div>
-        <button class="add-poll-btn" onclick="addPollOption()"><i class="fas fa-plus"></i> Add Option</button>
-      </div>
-
-      <!-- Schedule -->
-      <div class="post-section">
-        <div class="post-section-title">📅 Event Date (for Events)</div>
-        <input type="datetime-local" class="form-input" id="postEventDate"/>
-        <input type="text" class="form-input" id="postEventLocation" placeholder="Location or 'Online via WhatsApp'" style="margin-top:.5rem;"/>
-      </div>
-
-      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="savePost()"><i class="fas fa-paper-plane"></i><span>Publish Post</span></button>
-    </div>
-  </div>
-
-  <!-- Rashi Edit Modal -->
-  <div class="modal-overlay" id="rashiEditModal">
-    <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
-      <button class="modal-close" onclick="closeModal('rashiEditModal')"><i class="fas fa-times"></i></button>
-      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;" id="rashiEditTitle">Edit Rashi Guidance</h3>
-      <input type="hidden" id="rashiEditKey"/>
-      <div class="form-group"><label class="form-label">💼 Career & Finance</label><textarea class="form-textarea" id="rashiCareer" style="min-height:80px;"></textarea></div>
-      <div class="form-group"><label class="form-label">💑 Love & Relationships</label><textarea class="form-textarea" id="rashiLove" style="min-height:80px;"></textarea></div>
-      <div class="form-group"><label class="form-label">🏥 Health</label><textarea class="form-textarea" id="rashiHealth" style="min-height:80px;"></textarea></div>
-      <div class="form-group"><label class="form-label">🧿 Remedy by Dr. Shastrijee</label><textarea class="form-textarea" id="rashiRemedy" style="min-height:80px;"></textarea></div>
-      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveRashiGuidance()"><i class="fas fa-save"></i><span>Save Guidance</span></button>
-    </div>
-  </div>
-
-  <!-- Achievement/Photo Add Modal -->
-  <div class="modal-overlay" id="addAchModal">
-    <div class="modal" style="max-width:480px;">
-      <button class="modal-close" onclick="closeModal('addAchModal')"><i class="fas fa-times"></i></button>
-      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;" id="addAchTitle">Add Achievement</h3>
-      <input type="hidden" id="achType"/>
-      <input type="hidden" id="editAchId"/>
-      <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="achTitle" placeholder="Award / Certificate title"/></div>
-      <div class="form-group"><label class="form-label">Organisation / Source</label><input type="text" class="form-input" id="achOrg" placeholder="e.g. IAF, National Council..."/></div>
-      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="achDesc" style="min-height:80px;" placeholder="Brief description..."></textarea></div>
-      <div class="form-group"><label class="form-label">Photo</label>
-        <div class="img-upload-area" onclick="document.getElementById('achImgFile').click()" style="padding:1rem;">
-          <input type="file" id="achImgFile" accept="image/*" style="display:none;" onchange="previewAchImg(this)"/>
-          <i class="fas fa-camera"></i><span>Upload photo</span>
-        </div>
-        <input type="url" class="form-input" id="achImgUrl" placeholder="Or paste image URL" style="margin-top:.5rem;"/>
-        <div id="achImgPreview" style="margin-top:.5rem;"></div>
-      </div>
-      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveAchievement()"><i class="fas fa-save"></i><span>Save</span></button>
-    </div>
-  </div>
-
-  <!-- Site Setting Edit Modal -->
+  <!-- Site Setting editor -->
   <div class="modal-overlay" id="siteSettingModal">
     <div class="modal" style="max-width:480px;">
       <button class="modal-close" onclick="closeModal('siteSettingModal')"><i class="fas fa-times"></i></button>
@@ -588,20 +455,142 @@
     </div>
   </div>
 
-  <!-- FAQ Add/Edit Modal -->
+  <!-- Product modal -->
+  <div class="modal-overlay" id="addProductModal">
+    <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('addProductModal')"><i class="fas fa-times"></i></button>
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.5rem;" id="productModalTitle">Add Product</h3>
+      <input type="hidden" id="editProductId"/>
+      <div class="form-group">
+        <label class="form-label">Product Image</label>
+        <div class="img-upload-area" onclick="document.getElementById('productImgFile').click()">
+          <input type="file" id="productImgFile" accept="image/*" style="display:none;" onchange="previewProductImg(this)"/>
+          <i class="fas fa-camera"></i><span>Click to upload product photo</span>
+        </div>
+        <div class="img-preview-wrap" id="productImgPreview"></div>
+        <div style="margin-top:.6rem;"><label class="form-label" style="font-size:.7rem;">Or paste image URL</label><input type="url" class="form-input" id="pImageUrl" placeholder="https://..." style="margin-top:.3rem;"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Product Name</label><input type="text" class="form-input" id="pName" placeholder="e.g. Five Mukhi Rudraksha"/></div>
+      <div class="form-group"><label class="form-label">Emoji Icon</label><input type="text" class="form-input" id="pEmoji" placeholder="📿" maxlength="4"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input" id="pCategory"><option value="gemstones">💎 Gemstones</option><option value="rudraksha">📿 Rudraksha</option><option value="yantras">🔯 Yantras</option><option value="spiritual">🕯️ Spiritual</option></select></div>
+        <div class="form-group"><label class="form-label">Price (₹)</label><input type="number" class="form-input" id="pPrice" placeholder="0"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">Ruling Planet</label><input type="text" class="form-input" id="pPlanet" placeholder="e.g. Moon (Chandra)"/></div>
+        <div class="form-group"><label class="form-label">Planet (Hindi)</label><input type="text" class="form-input" id="pPlanetHi" placeholder="चंद्र"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Benefits</label><input type="text" class="form-input" id="pBenefits" placeholder="Peace, clarity, emotional balance"/></div>
+      <div class="form-group"><label class="form-label">Short Description</label><textarea class="form-textarea" id="pDesc" style="min-height:70px;" placeholder="What is this product?"></textarea></div>
+      <div class="form-group"><label class="form-label">Detailed Info</label><textarea class="form-textarea" id="pDetail" style="min-height:70px;" placeholder="Origin, certification, energization..."></textarea></div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveProduct()"><i class="fas fa-save"></i><span>Save Product</span></button>
+    </div>
+  </div>
+
+  <!-- Post / Announcement modal -->
+  <div class="modal-overlay" id="addPostModal">
+    <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('addPostModal')"><i class="fas fa-times"></i></button>
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;">✦ Create Post</h3>
+      <div class="form-group">
+        <label class="form-label">Post Type</label>
+        <div class="post-type-tabs">
+          <button class="ptype-btn active" onclick="setPostType('announcement',this)">📢 Announcement</button>
+          <button class="ptype-btn" onclick="setPostType('event',this)">🌙 Event</button>
+          <button class="ptype-btn" onclick="setPostType('wisdom',this)">✨ Wisdom</button>
+          <button class="ptype-btn" onclick="setPostType('offer',this)">🎁 Offer</button>
+        </div>
+        <input type="hidden" id="postType" value="announcement"/>
+      </div>
+      <div class="post-section"><div class="post-section-title">✍️ Message</div><textarea class="form-textarea" id="postText" style="min-height:120px;" placeholder="Write your announcement..."></textarea></div>
+      <div class="post-section">
+        <div class="post-section-title">🖼️ Images (up to 4)</div>
+        <div class="img-upload-area" onclick="document.getElementById('postImgFiles').click()" style="padding:1rem;">
+          <input type="file" id="postImgFiles" accept="image/*" multiple style="display:none;" onchange="previewPostImages(this)"/>
+          <i class="fas fa-images" style="font-size:1.5rem;"></i><span>Click to upload images</span>
+        </div>
+        <div class="img-preview-wrap" id="postImgPreview"></div>
+        <div style="margin-top:.6rem;"><input type="url" class="form-input" id="postImgUrl" placeholder="Or paste image URL..." style="margin-bottom:.4rem;"/><button class="add-poll-btn" onclick="addPostImageUrl()"><i class="fas fa-plus"></i> Add Image URL</button></div>
+      </div>
+      <div class="post-section"><div class="post-section-title">🔗 External Link (Optional)</div><input type="url" class="form-input" id="postLink" placeholder="https://..."/><input type="text" class="form-input" id="postLinkText" placeholder="Link label (e.g. Read More)" style="margin-top:.5rem;"/></div>
+      <div class="post-section">
+        <div class="post-section-title">📊 Poll (Optional)</div>
+        <input type="text" class="form-input" id="pollQuestion" placeholder="Poll question... (leave blank to skip)" style="margin-bottom:.8rem;"/>
+        <div id="pollOptions">
+          <div class="poll-option-row"><input type="text" class="form-input" placeholder="Option 1" value="Yes"/><button class="poll-del-btn" onclick="removePollOption(this)"><i class="fas fa-times"></i></button></div>
+          <div class="poll-option-row"><input type="text" class="form-input" placeholder="Option 2" value="No"/><button class="poll-del-btn" onclick="removePollOption(this)"><i class="fas fa-times"></i></button></div>
+        </div>
+        <button class="add-poll-btn" onclick="addPollOption()"><i class="fas fa-plus"></i> Add Option</button>
+      </div>
+      <div class="post-section"><div class="post-section-title">📅 Event Details (for Events)</div><input type="datetime-local" class="form-input" id="postEventDate"/><input type="text" class="form-input" id="postEventLocation" placeholder="Location or Online via WhatsApp" style="margin-top:.5rem;"/></div>
+      <input type="url" class="form-input" id="postVideo" placeholder="Video URL (YouTube/Instagram)" style="margin-bottom:.8rem;"/>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="savePost()"><i class="fas fa-paper-plane"></i><span>Publish Post</span></button>
+    </div>
+  </div>
+
+  <!-- Rashi edit modal -->
+  <div class="modal-overlay" id="rashiEditModal">
+    <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('rashiEditModal')"><i class="fas fa-times"></i></button>
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;" id="rashiEditTitle">Edit Rashi Guidance</h3>
+      <input type="hidden" id="rashiEditKey"/>
+      <div class="form-group"><label class="form-label">💼 Career &amp; Finance</label><textarea class="form-textarea" id="rashiCareer" style="min-height:80px;"></textarea></div>
+      <div class="form-group"><label class="form-label">💑 Love &amp; Relationships</label><textarea class="form-textarea" id="rashiLove" style="min-height:80px;"></textarea></div>
+      <div class="form-group"><label class="form-label">🏥 Health</label><textarea class="form-textarea" id="rashiHealth" style="min-height:80px;"></textarea></div>
+      <div class="form-group"><label class="form-label">🧿 Remedy by Dr. Shastrijee</label><textarea class="form-textarea" id="rashiRemedy" style="min-height:80px;"></textarea></div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveRashiGuidance()"><i class="fas fa-save"></i><span>Save Guidance</span></button>
+    </div>
+  </div>
+
+  <!-- Achievement modal — multi-image (10) + crop tool -->
+  <div class="modal-overlay" id="addAchModal">
+    <div class="modal" style="max-width:520px;max-height:92vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('addAchModal')"><i class="fas fa-times"></i></button>
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;" id="addAchTitle">Add Achievement</h3>
+      <input type="hidden" id="achType"/>
+      <input type="hidden" id="editAchId"/>
+      <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="achTitle" placeholder="e.g. Jyotish Ratna Award 2018"/></div>
+      <div class="form-group"><label class="form-label">Organisation / Awarded By</label><input type="text" class="form-input" id="achOrg" placeholder="e.g. All India Astrology Federation"/></div>
+      <div class="form-group"><label class="form-label">Description <span style="color:var(--silver);font-size:.75rem;">(optional)</span></label><textarea class="form-textarea" id="achDesc" style="min-height:60px;" placeholder="Brief description..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Photos <span style="color:var(--gold);font-size:.75rem;">(up to 10)</span></label>
+        <div class="img-upload-area" onclick="document.getElementById('achImgFiles').click()" style="padding:1.2rem;">
+          <input type="file" id="achImgFiles" accept="image/*" multiple style="display:none;" onchange="handleAchImages(this)"/>
+          <i class="fas fa-images"></i><span>Click to select up to 10 photos</span>
+        </div>
+        <!-- Crop tool -->
+        <div id="achCropWrap" style="display:none;margin-top:.8rem;background:rgba(0,0,0,.6);border-radius:12px;padding:1rem;">
+          <p style="font-family:var(--font-ui);font-size:.78rem;color:var(--gold);margin-bottom:.5rem;">✂️ Crop &amp; Adjust — drag to move</p>
+          <div style="position:relative;width:100%;padding-top:60%;overflow:hidden;background:#111;border-radius:8px;">
+            <canvas id="achCropCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center;margin-top:.6rem;flex-wrap:wrap;">
+            <label style="font-family:var(--font-ui);font-size:.75rem;color:var(--silver);">Zoom:</label>
+            <input type="range" id="achZoom" min="0.5" max="4" step="0.05" value="1" style="flex:1;min-width:80px;" oninput="drawAchCrop()"/>
+            <button onclick="confirmAchCrop()" style="background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);color:#25d366;font-family:var(--font-ui);font-size:.78rem;padding:.3rem .9rem;border-radius:8px;cursor:pointer;">✓ Use Cropped</button>
+            <button onclick="skipAchCrop()"    style="background:rgba(255,255,255,.06);border:1px solid var(--glass-border);color:var(--silver);font-family:var(--font-ui);font-size:.78rem;padding:.3rem .8rem;border-radius:8px;cursor:pointer;">Use Original</button>
+          </div>
+        </div>
+        <div id="achImgPreview" style="display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.8rem;"></div>
+        <div style="margin-top:.6rem;"><label class="form-label" style="font-size:.7rem;">Or paste image URL</label><input type="url" class="form-input" id="achImgUrl" placeholder="https://..." style="margin-top:.3rem;"/></div>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveAchievement()"><i class="fas fa-save"></i><span>Save &amp; Add to Website</span></button>
+    </div>
+  </div>
+
+  <!-- FAQ modal -->
   <div class="modal-overlay" id="addFaqModal">
     <div class="modal" style="max-width:500px;">
       <button class="modal-close" onclick="closeModal('addFaqModal')"><i class="fas fa-times"></i></button>
       <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.2rem;" id="faqModalTitle">Add FAQ</h3>
       <input type="hidden" id="editFaqId"/>
       <div class="form-group"><label class="form-label">Question</label><input type="text" class="form-input" id="faqQuestion" placeholder="What is Vedic astrology?"/></div>
-      <div class="form-group"><label class="form-label">Answer</label><textarea class="form-textarea" id="faqAnswer" style="min-height:120px;" placeholder="Vedic astrology, also known as Jyotish..."></textarea></div>
+      <div class="form-group"><label class="form-label">Answer</label><textarea class="form-textarea" id="faqAnswer" style="min-height:120px;"></textarea></div>
       <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="saveFaq()"><i class="fas fa-save"></i><span>Save FAQ</span></button>
     </div>
   </div>
 
-  <!-- User Detail Modal -->
-
+  <!-- Scripts — dashboard.js loads LAST -->
   <script src="../js/config.js"></script>
   <script src="../js/nav.js"></script>
   <script src="../js/cosmic.js"></script>

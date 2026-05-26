@@ -1,0 +1,9 @@
+/* ============================================
+   AstroVeda – Shared Navbar Snippet (reference)
+   All pages use this exact nav
+   ============================================ */
+
+/* NAV CSS already in main.css */
+
+/* GLOBAL hidden utility — ensure this is reliable */
+.hidden { display: none !important; }

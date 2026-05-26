@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../css/main.css"/>
   <link rel="stylesheet" href="../css/animations.css"/>
   <link rel="stylesheet" href="../css/components.css"/>
+  <link rel="stylesheet" href="../css/global-fix.css"/>
   <link rel="stylesheet" href="../css/about.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -93,18 +94,18 @@
         <div class="contact-info reveal">
           <div class="contact-card glass-card">
             <h4>Contact Details</h4>
-            <div class="contact-row"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp</strong><span>+91 88630382239</span></div></div>
-            <div class="contact-row"><i class="fas fa-envelope"></i><div><strong>Email</strong><span>info@astroveda.com</span></div></div>
+            <div class="contact-row"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp</strong><span id="contactWhatsApp">+91 8863038229</span></div></div>
+            <div class="contact-row"><i class="fas fa-envelope"></i><div><strong>Email</strong><span id="contactEmail">astrorrshastri@gmail.com</span></div></div>
             <div class="contact-row"><i class="fas fa-map-marker-alt"></i><div><strong>Location</strong><span>India (Consultations worldwide)</span></div></div>
             <div class="contact-row"><i class="fas fa-clock"></i><div><strong>Hours</strong><span>Mon–Sat: 9am – 8pm IST</span></div></div>
           </div>
           <div class="socials-card glass-card">
             <h4>Follow Us</h4>
             <div class="socials-grid">
-              <a href="#" class="social-big-btn"><i class="fab fa-instagram"></i><span>Instagram</span></a>
-              <a href="#" class="social-big-btn"><i class="fab fa-youtube"></i><span>YouTube</span></a>
-              <a href="#" class="social-big-btn"><i class="fab fa-facebook-f"></i><span>Facebook</span></a>
-              <a href="#" class="social-big-btn whatsapp-btn"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
+              <a href="#" id="socialInstagram" class="social-big-btn"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+              <a href="#" id="socialYoutube" class="social-big-btn"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+              <a href="#" id="socialFacebook" class="social-big-btn"><i class="fab fa-facebook-f"></i><span>Facebook</span></a>
+              <a href="https://wa.me/918863038229" id="socialWhatsapp" target="_blank" class="social-big-btn whatsapp-btn"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
             </div>
           </div>
         </div>
@@ -127,22 +128,35 @@
     <div class="faq-list" id="faqList"></div>
   </section>
 
-  <!-- Terms -->
+  <!-- Terms & Privacy — links to dedicated pages -->
   <section class="terms-section container" style="padding-bottom:4rem;">
     <div class="terms-grid">
-      <div class="terms-card glass-card reveal"><h4>Privacy Policy</h4><p>We respect your privacy. All personal information shared during consultations is kept strictly confidential and never shared with third parties without your consent.</p><a href="#" class="service-link">Read Full Policy →</a></div>
-      <div class="terms-card glass-card reveal"><h4>Terms of Service</h4><p>By using AstroVeda, you agree to our terms of service. Astrological guidance is for informational purposes and does not replace professional medical, legal, or financial advice.</p><a href="#" class="service-link">Read Full Terms →</a></div>
+      <div class="terms-card glass-card reveal" style="display:flex;flex-direction:column;">
+        <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
+        <h4>Privacy Policy</h4>
+        <p style="flex:1;margin-bottom:1.5rem;">We respect your privacy. All personal information shared during consultations is kept strictly confidential and never shared with third parties without your consent.</p>
+        <a href="privacy.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:.6rem;justify-content:center;padding:.7rem 1.5rem;font-size:.88rem;"><span>Read Full Policy</span><i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="terms-card glass-card reveal" style="display:flex;flex-direction:column;">
+        <div style="font-size:2rem;margin-bottom:.8rem;">📋</div>
+        <h4>Terms of Service</h4>
+        <p style="flex:1;margin-bottom:1.5rem;">By using AstroVeda, you agree to our terms of service. Astrological guidance is for informational purposes and does not replace professional medical, legal, or financial advice.</p>
+        <a href="terms.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:.6rem;justify-content:center;padding:.7rem 1.5rem;font-size:.88rem;"><span>Read Full Terms</span><i class="fas fa-arrow-right"></i></a>
+      </div>
     </div>
   </section>
 
   <footer class="footer">
     <div class="footer-stars" id="footerStars"></div>
     <div class="footer-content">
-      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p><div class="footer-socials"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div></div>
+      <div class="footer-brand"><div class="footer-logo">✦ AstroVeda</div><p>Ancient wisdom for the modern soul.</p><div class="footer-socials"><a href="#" id="footerInstagram" target="_blank"><i class="fab fa-instagram"></i></a><a href="#" id="footerFacebook" target="_blank"><i class="fab fa-facebook"></i></a><a href="https://wa.me/918863038229" id="footerWhatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a></div></div>
       <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="../index.html">Home</a></li><li><a href="appointment.html">Book Appointment</a></li><li><a href="products.html">Products</a></li></ul></div>
-      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 88630382239</p></div>
+      <div class="footer-contact"><h4>Contact</h4><p><i class="fab fa-whatsapp"></i> +91 8863038229</p></div>
     </div>
-    <div class="footer-bottom"><p>© 2024 AstroVeda · All Rights Reserved</p></div>
+    <div class="footer-bottom">
+      <p>© 2024 AstroVeda · All Rights Reserved</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
+    </div>
   </footer>
 
   <script src="../js/config.js"></script>
