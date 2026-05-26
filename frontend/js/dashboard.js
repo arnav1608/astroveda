@@ -67,6 +67,10 @@ function switchDash(name, btn) {
   document.querySelectorAll('.dash-nav-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('panel-' + name)?.classList.add('active');
   if (btn) { btn.classList.add('active'); var t = document.getElementById('dashTitle'); if (t) t.textContent = btn.textContent.trim(); }
+  // FIX: Auto-close sidebar on mobile when a nav item is clicked
+  if (window.innerWidth <= 900) {
+    document.getElementById('dashSidebar')?.classList.remove('open');
+  }
   if (name === 'reviews')      renderReviewsPanel();
   if (name === 'rashi')        renderRashiEditor();
   if (name === 'achievements') renderAchievementsPanel();
@@ -602,8 +606,6 @@ function saveAchievement(){
   var achievements=JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]');
   var imgUrl=(document.getElementById('achImgUrl')?.value||'').trim();
 
-  // FIX 4: If user selected files but didn't click crop buttons,
-  // auto-capture and COMPRESS the current canvas state
   if(achImagesList.length===0 && achCropImg) {
     var MAX=700,w=achCropImg.naturalWidth,h=achCropImg.naturalHeight;
     if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
@@ -616,15 +618,38 @@ function saveAchievement(){
 
   var primaryImg=achImagesList.length>0?achImagesList[0]:(achImgData||'');
   var item={type:type,title:title,org:document.getElementById('achOrg')?.value||'',desc:document.getElementById('achDesc')?.value||'',imageData:primaryImg,imageUrl:imgUrl,images:achImagesList.length>1?achImagesList:undefined};
-  if(editId){var idx=achievements.findIndex(function(a){return a.id==editId;});if(idx>-1)achievements[idx]=Object.assign(achievements[idx],item);}
-  else{
+
+  if(editId){
+    var idx=achievements.findIndex(function(a){return a.id==editId;});
+    if(idx>-1)achievements[idx]=Object.assign(achievements[idx],item);
+    safeSetItem('astroveda_custom_achievements',JSON.stringify(achievements));
+    closeModal('addAchModal');renderAchievementsPanel();achImgData='';achImagesList=[];achCropImg=null;
+  } else {
     achievements.push(Object.assign({id:Date.now()},item));
+    safeSetItem('astroveda_custom_achievements',JSON.stringify(achievements));
+
+    // Save to MongoDB — sends imageData as base64 in JSON body
     var sm={award:'awards',certificate:'certificates',medal:'medals',photo:'photos'};
-    var fd=new FormData();fd.append('title',title);fd.append('subtitle',item.org||'');fd.append('desc',item.desc||'');if(imgUrl)fd.append('imageUrl',imgUrl);
-    fetch(API+'/achievements/'+(sm[type]||'awards'),{method:'POST',headers:{'Authorization':'Bearer '+getToken()},body:fd}).catch(function(){});
+    var payload={title:title,subtitle:item.org||'',desc:item.desc||'',imageData:primaryImg,imageUrl:imgUrl};
+    fetch(API+'/achievements/'+(sm[type]||'awards'),{
+      method:'POST',
+      headers:Object.assign({'Content-Type':'application/json'},{'Authorization':'Bearer '+getToken()}),
+      body:JSON.stringify(payload)
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.success && d.items) {
+        // Update localStorage with server-assigned IDs
+        var serverItems = d.items.map(function(si){
+          return {id:si._id||si.id,type:type,title:si.title||title,org:si.subtitle||item.org,desc:si.desc||item.desc,imageData:primaryImg,imageUrl:si.imageUrl||imgUrl};
+        });
+        safeSetItem('astroveda_custom_achievements_'+sm[type], JSON.stringify(serverItems));
+      }
+    })
+    .catch(function(){});
+
+    closeModal('addAchModal');renderAchievementsPanel();achImgData='';achImagesList=[];achCropImg=null;
   }
-  safeSetItem('astroveda_custom_achievements',JSON.stringify(achievements));
-  closeModal('addAchModal');renderAchievementsPanel();achImgData='';achImagesList=[];achCropImg=null;
 }
 function deleteAchievement(id){if(!confirm('Delete?'))return;localStorage.setItem('astroveda_custom_achievements',JSON.stringify(JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){return a.id!=id;})));renderAchievementsPanel();}
 function clearAllAchievements(){if(!confirm('Delete ALL achievements?'))return;localStorage.removeItem('astroveda_custom_achievements');renderAchievementsPanel();alert('All achievements cleared.');}

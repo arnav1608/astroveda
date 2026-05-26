@@ -12,23 +12,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* Lightbox */
     #achLightbox{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:1.5rem;cursor:zoom-out;}
     #achLightbox.open{display:flex;}
     #lbImg{max-width:92vw;max-height:84vh;object-fit:contain;border-radius:14px;box-shadow:0 0 60px rgba(201,168,76,.35);cursor:default;}
     #lbClose{position:fixed;top:1rem;right:1rem;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.5rem;cursor:pointer;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;z-index:100000;}
     #lbCaption{font-family:var(--font-ui);font-size:.9rem;color:rgba(255,255,255,.75);text-align:center;max-width:620px;}
-    /* Clickable card */
     .ach-card{cursor:zoom-in;transition:transform .3s,box-shadow .3s;}
     .ach-card:hover{transform:translateY(-6px) scale(1.015);box-shadow:0 0 28px rgba(201,168,76,.25);}
-    /* Award image — full width above text */
     .award-img{width:100%;height:190px;object-fit:cover;border-radius:14px;margin-bottom:1rem;display:block;}
     .award-no-img{width:70px;height:70px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;font-size:2.4rem;}
-    /* Certificate image */
     .cert-img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-top:.8rem;display:block;}
-    /* Medal image */
     .medal-img{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:.8rem;display:block;}
-    /* Photo card — override aspect-ratio so image shows */
     .photo-card{border-radius:14px;overflow:hidden;background:rgba(8,8,30,.85);border:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;aspect-ratio:unset!important;}
     .photo-card-img{width:100%;height:210px;object-fit:cover;display:block;flex-shrink:0;}
     .photo-placeholder{height:210px;background:rgba(201,168,76,.04);display:flex;align-items:center;justify-content:center;font-size:3.5rem;flex-shrink:0;}
@@ -44,7 +38,6 @@
   <canvas id="cosmicCanvas"></canvas>
   <nav class="navbar" id="navbar"></nav>
 
-  <!-- Lightbox -->
   <div id="achLightbox" onclick="if(event.target.id==='achLightbox')closeLightbox()">
     <button id="lbClose" onclick="closeLightbox()">✕</button>
     <img id="lbImg" src="" alt="Achievement"/>
@@ -154,25 +147,23 @@
   <script>
   'use strict';
 
-  // ─── Image cache: store base64 in JS array, use index in HTML attributes ─────
   var _imgCache = [];
+  var apiUrl = window.ASTROVEDA_API || 'http://localhost:5000/api';
+
   function cacheImg(src) {
     if (!src || src.length < 15) return '';
     _imgCache.push(src);
-    return String(_imgCache.length - 1); // index as string
+    return String(_imgCache.length - 1);
   }
   function recallImg(idx) {
-    if (idx === '') return '';
+    if (idx === '' || idx === null) return '';
     var i = parseInt(idx);
-    return (isNaN(i) ? '' : (_imgCache[i] || ''));
+    return isNaN(i) ? '' : (_imgCache[i] || '');
   }
-  function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
-  // ─── Get best available image from any item ───────────────────────────────────
   function bestSrc(a) {
-    var checks = [a.imageData, a.images && a.images[0], a.imageUrl, a.image];
+    var checks = [a.imageData, a.image, a.images && a.images[0], a.imageUrl];
     for (var i = 0; i < checks.length; i++) {
       var v = checks[i];
       if (v && typeof v === 'string' && v.length > 15) return v;
@@ -180,7 +171,6 @@
     return '';
   }
 
-  // ─── Lightbox ─────────────────────────────────────────────────────────────────
   function openLightbox(idx, caption) {
     var src = recallImg(idx);
     if (!src) return;
@@ -195,8 +185,6 @@
     setTimeout(function(){ document.getElementById('lbImg').src=''; }, 300);
   }
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
-
-  // Delegated click — every .ach-card carries data-idx and data-cap
   document.addEventListener('click', function(e) {
     var card = e.target.closest('.ach-card');
     if (!card) return;
@@ -205,7 +193,6 @@
     if (idx !== null && idx !== '') openLightbox(idx, cap);
   });
 
-  // ─── Tab switch ────────────────────────────────────────────────────────────────
   function switchAchTab(name, btn) {
     document.querySelectorAll('.ach-panel').forEach(function(p){ p.classList.remove('active'); });
     document.querySelectorAll('.ach-tab').forEach(function(b){ b.classList.remove('active'); });
@@ -213,100 +200,100 @@
     btn.classList.add('active');
   }
 
-  // ─── Render: Award ─────────────────────────────────────────────────────────────
   function renderAward(a) {
-    var src = bestSrc(a);
-    var idx = cacheImg(src);
-    var hasImg = src.length > 15;
+    var src = bestSrc(a); var idx = cacheImg(src); var hasImg = src.length > 15;
     return '<div class="award-card silver-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
-      + (hasImg
-          ? '<img class="award-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>'
-          : '<div class="award-no-img">🏆</div>')
+      + (hasImg ? '<img class="award-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>' : '<div class="award-no-img">🏆</div>')
       + '<h3 class="award-title">'+(a.title||'Untitled')+'</h3>'
       + (a.org||a.subtitle ? '<p class="award-org">'+(a.org||a.subtitle)+'</p>' : '')
       + (a.desc ? '<p class="award-desc">'+a.desc+'</p>' : '')
       + '</div>';
   }
-
-  // ─── Render: Certificate ────────────────────────────────────────────────────────
   function renderCert(a) {
-    var src = bestSrc(a);
-    var idx = cacheImg(src);
-    var hasImg = src.length > 15;
+    var src = bestSrc(a); var idx = cacheImg(src); var hasImg = src.length > 15;
     return '<div class="cert-card glass-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
-      + '<div style="display:flex;gap:.8rem;align-items:flex-start;">'
-      +   '<span style="font-size:2.2rem;flex-shrink:0;">📜</span>'
-      +   '<div class="cert-body">'
-      +     '<h4>'+(a.title||'Untitled')+'</h4>'
-      +     '<p class="cert-inst">'+(a.org||a.subtitle||'')+'</p>'
-      +     (a.desc ? '<p class="cert-desc">'+a.desc+'</p>' : '')
-      +   '</div>'
-      + '</div>'
+      + '<div style="display:flex;gap:.8rem;align-items:flex-start;"><span style="font-size:2.2rem;flex-shrink:0;">📜</span>'
+      + '<div class="cert-body"><h4>'+(a.title||'Untitled')+'</h4><p class="cert-inst">'+(a.org||a.subtitle||'')+'</p>'
+      + (a.desc ? '<p class="cert-desc">'+a.desc+'</p>' : '') + '</div></div>'
       + (hasImg ? '<img class="cert-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>' : '')
       + '</div>';
   }
-
-  // ─── Render: Medal ──────────────────────────────────────────────────────────────
   function renderMedal(a) {
-    var src = bestSrc(a);
-    var idx = cacheImg(src);
-    var hasImg = src.length > 15;
+    var src = bestSrc(a); var idx = cacheImg(src); var hasImg = src.length > 15;
     return '<div class="medal-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(a.title||'')+'">'
-      + '<div class="medal-display gold-medal">🥇</div>'
-      + '<h4>'+(a.title||'Untitled')+'</h4>'
+      + '<div class="medal-display gold-medal">🥇</div><h4>'+(a.title||'Untitled')+'</h4>'
       + (a.desc ? '<p>'+a.desc+'</p>' : '')
       + (hasImg ? '<img class="medal-img" src="'+src+'" alt="'+esc(a.title||'')+'" onerror="this.style.display=\'none\'"/>' : '')
       + (a.org||a.subtitle ? '<p style="font-family:var(--font-ui);font-size:.75rem;color:var(--gold);margin-top:.4rem;">'+(a.org||a.subtitle)+'</p>' : '')
       + '</div>';
   }
-
-  // ─── Render: Photo ──────────────────────────────────────────────────────────────
   function renderPhoto(p) {
-    var src = bestSrc(p);
-    var idx = cacheImg(src);
-    var hasImg = src.length > 15;
+    var src = bestSrc(p); var idx = cacheImg(src); var hasImg = src.length > 15;
     return '<div class="photo-card ach-card" data-idx="'+esc(idx)+'" data-cap="'+esc(p.title||'')+'">'
-      + (hasImg
-          ? '<img class="photo-card-img" src="'+src+'" alt="'+esc(p.title||'')+'" onerror="this.style.display=\'none\'"/>'
-          : '<div class="photo-placeholder">📸</div>')
+      + (hasImg ? '<img class="photo-card-img" src="'+src+'" alt="'+esc(p.title||'')+'" onerror="this.style.display=\'none\'"/>' : '<div class="photo-placeholder">📸</div>')
       + '<div class="photo-card-body">'
-      + (p.title  ? '<div class="photo-card-title">'+p.title+'</div>' : '')
+      + (p.title ? '<div class="photo-card-title">'+p.title+'</div>' : '')
       + (p.org||p.subtitle ? '<div class="photo-card-org">'+(p.org||p.subtitle)+'</div>' : '')
-      + (p.desc   ? '<div class="photo-card-desc">'+p.desc+'</div>' : '')
+      + (p.desc ? '<div class="photo-card-desc">'+p.desc+'</div>' : '')
       + '</div></div>';
   }
 
-  // ─── Load from localStorage and render ────────────────────────────────────────
-  function localItems(type) {
-    try {
-      return JSON.parse(localStorage.getItem('astroveda_custom_achievements') || '[]')
-             .filter(function(a){ return a.type === type; });
-    } catch(e) { return []; }
-  }
-
   function renderGrid(gridId, emptyId, items, fn) {
-    var grid  = document.getElementById(gridId);
+    var grid = document.getElementById(gridId);
     var empty = document.getElementById(emptyId);
     if (!grid) return;
-    if (items.length > 0) {
+    if (items && items.length > 0) {
       if (empty) empty.style.display = 'none';
       grid.innerHTML = items.map(fn).join('');
     } else {
       if (empty) empty.style.display = '';
-      // Remove any stale rendered cards (keep only the empty placeholder)
-      Array.from(grid.children).forEach(function(child){
-        if (child.id !== emptyId) child.remove();
-      });
+      Array.from(grid.children).forEach(function(c){ if(c.id !== emptyId) c.remove(); });
     }
   }
 
-  window.addEventListener('DOMContentLoaded', function() {
-    _imgCache = []; // fresh cache on every page load
+  // Convert MongoDB item to local format
+  function fromServer(si, type) {
+    return {
+      type: type,
+      title: si.title || '',
+      org: si.subtitle || '',
+      desc: si.desc || '',
+      // image field holds either base64 data URI or URL path
+      imageData: (si.image && si.image.startsWith('data:')) ? si.image : '',
+      imageUrl:  (si.image && !si.image.startsWith('data:')) ? si.image : (si.imageUrl || ''),
+      image: si.image || ''
+    };
+  }
 
-    renderGrid('awardsGrid', 'awardsEmpty', localItems('award'),       renderAward);
-    renderGrid('certsGrid',  'certsEmpty',  localItems('certificate'), renderCert);
-    renderGrid('medalsGrid', 'medalsEmpty', localItems('medal'),       renderMedal);
-    renderGrid('photosGrid', 'photosEmpty', localItems('photo'),       renderPhoto);
+  function localItems(type) {
+    try { return JSON.parse(localStorage.getItem('astroveda_custom_achievements')||'[]').filter(function(a){ return a.type===type; }); }
+    catch(e) { return []; }
+  }
+
+  // Load section: show local first, then load from MongoDB (works on ALL devices)
+  function loadSection(apiKey, gridId, emptyId, fn, localType) {
+    // Instant: show from localStorage
+    var local = localItems(localType);
+    if (local.length) renderGrid(gridId, emptyId, local, fn);
+
+    // Then fetch from MongoDB — this is what makes it cross-device
+    fetch(apiUrl + '/achievements/' + apiKey)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.success && d.items && d.items.length) {
+          var items = d.items.map(function(si){ return fromServer(si, localType); });
+          renderGrid(gridId, emptyId, items, fn);
+        }
+      })
+      .catch(function(){});
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    _imgCache = [];
+    loadSection('awards',       'awardsGrid', 'awardsEmpty', renderAward, 'award');
+    loadSection('certificates', 'certsGrid',  'certsEmpty',  renderCert,  'certificate');
+    loadSection('medals',       'medalsGrid', 'medalsEmpty', renderMedal, 'medal');
+    loadSection('photos',       'photosGrid', 'photosEmpty', renderPhoto, 'photo');
   });
   </script>
 </body>

@@ -75,4 +75,16 @@
 .interest-opt input { display:none; }
 
 @media (max-width:1024px) { .overview-grid { grid-template-columns:1fr 1fr; } }
-@media (max-width:768px) { .overview-grid { grid-template-columns:1fr; } .profile-main { flex-direction:column;align-items:flex-start;margin-top:-40px; } }
+@media (max-width:768px) {
+  .overview-grid { grid-template-columns:1fr; }
+  .profile-cover { height:180px; margin-top:64px; }
+  .profile-main { flex-direction:column; align-items:flex-start; margin-top:-50px; gap:.8rem; padding:0 1rem 1rem; }
+  .profile-avatar { width:90px; height:90px; font-size:2.2rem; }
+  .profile-name { font-size:1.3rem; }
+  .profile-meta-row { gap:.8rem; font-size:.78rem; }
+  .profile-tabs { overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; display:flex; }
+  .profile-tabs .tab-btn { flex-shrink:0; font-size:.8rem; padding:.5rem .9rem; }
+  .profile-stats-grid { grid-template-columns:1fr 1fr; gap:.7rem; }
+  .pstat-num { font-size:1.4rem; }
+  .appt-history-item { flex-direction:column; gap:.6rem; }
+}
