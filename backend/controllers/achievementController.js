@@ -12,13 +12,31 @@ exports.getSection = async (req, res) => {
 };
 
 // @route  POST /api/achievements/:section  (mod only)
+// Accepts both multipart/form-data (file upload) AND application/json (base64 imageData)
 exports.addItem = async (req, res) => {
   try {
     const { section } = req.params;
-    const image = req.file ? `/uploads/achievements/${req.file.filename}` : '';
+    
+    // Handle both file upload and base64 imageData
+    let image = '';
+    if (req.file) {
+      image = `/uploads/achievements/${req.file.filename}`;
+    } else if (req.body.imageData && req.body.imageData.startsWith('data:')) {
+      // Store base64 directly in MongoDB (compressed ~80-150KB, fine for Atlas)
+      image = req.body.imageData;
+    } else if (req.body.imageUrl) {
+      image = req.body.imageUrl;
+    }
+
     let ach = await Achievement.findOne({ section });
     if (!ach) ach = new Achievement({ section, items: [] });
-    ach.items.push({ ...req.body, image });
+    
+    ach.items.push({
+      title: req.body.title || '',
+      subtitle: req.body.subtitle || '',
+      desc: req.body.desc || '',
+      image: image
+    });
     await ach.save();
     res.status(201).json({ success: true, items: ach.items });
   } catch (err) {
@@ -34,7 +52,13 @@ exports.updateItem = async (req, res) => {
     if (!ach) return res.status(404).json({ success: false, message: 'Not found.' });
     const item = ach.items.id(itemId);
     if (!item) return res.status(404).json({ success: false, message: 'Item not found.' });
-    if (req.file) req.body.image = `/uploads/achievements/${req.file.filename}`;
+    
+    if (req.file) {
+      req.body.image = `/uploads/achievements/${req.file.filename}`;
+    } else if (req.body.imageData && req.body.imageData.startsWith('data:')) {
+      req.body.image = req.body.imageData;
+    }
+    
     Object.assign(item, req.body);
     await ach.save();
     res.json({ success: true, items: ach.items });
