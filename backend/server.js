@@ -11,6 +11,9 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 const app = express();
 
+// ── Trust Proxy — required for Render/Heroku/any reverse proxy ───────────────
+app.set('trust proxy', 1);
+
 // ── Connect Database ──────────────────────────────────────────────────────────
 connectDB();
 
