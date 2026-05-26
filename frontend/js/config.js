@@ -17,7 +17,7 @@
   } else {
     // ⚠️ PRODUCTION — Replace with your actual Render backend URL after deploying
     // Example: 'https://astroveda-api.onrender.com/api'
-    window.ASTROVEDA_API = 'https://astroveda-backend.onrender.com/api';
+    window.ASTROVEDA_API = 'https://astroveda-fey6.onrender.com/api';
   }
 
   window.getAPIUrl = function(path) {
